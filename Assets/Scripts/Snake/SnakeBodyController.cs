@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class SnakeBodyController : SnakePart
 {
+
     protected override void Start()
     {
         base.Start();
+       
     }
 
     protected override void Update()
@@ -14,4 +16,5 @@ public class SnakeBodyController : SnakePart
         base.Update();
     }
 
+    
 }
