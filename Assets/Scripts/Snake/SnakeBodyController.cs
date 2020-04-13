@@ -4,17 +4,12 @@ using UnityEngine;
 
 public class SnakeBodyController : SnakePart
 {
-
-    protected override void Start()
+    Vector3 lastPosition;
+    protected override void FixedUpdate()
     {
-        base.Start();
-       
+        base.FixedUpdate();
+        currentDirection = (transform.position - lastPosition).normalized;
+        lastPosition = transform.position;
     }
 
-    protected override void Update()
-    {
-        base.Update();
-    }
-
-    
 }

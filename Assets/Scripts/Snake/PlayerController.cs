@@ -2,54 +2,33 @@
 using System.Collections.Generic;
 using System;
 using UnityEngine;
-
+using MyUtil;
 public class PlayerController : SnakePart
 {
     private Vector3 touchStartPosition;
     private float timeToWalkOwnSize;
     private float timeLastDirectionChange;
+    private int initialSize=0;
     Vector3 oldDirection;
+    private int oldSizeDiff;
+    private bool teleporting;
 
     protected override void Start()
     {
         base.Start();
-        if (speed == 0)
+        if (speed<Mathf.Epsilon)
         {
-
-            speed = 3;
+            print("Speed not set");
         }
         timeToWalkOwnSize = GetComponent<Renderer>().bounds.size.x/speed;
         timeLastDirectionChange = -timeToWalkOwnSize;
-        oldDirection = getDirection();
-        //StartCoroutine("spawnTest");
+        oldDirection = currentDirection;
     }
 
-    private IEnumerator spawnTest()
-    {
-        /*
-        while (true)
-        {
-            if(getDirection().magnitude>Mathf.Epsilon)
-                growParts();
-            yield return new WaitForSeconds(3);     
-        }
-        */
-        while (getDirection().magnitude <= Mathf.Epsilon)
-        {
-            yield return new WaitForSeconds(1);
-        }
-        for (int i=0; i<30; i++)
-        {
-
-            growParts();
-        }
-        yield return new WaitForSeconds(1);
-    }
-
-    protected override void DetermineDirection()
+    protected void directionalInput()
     {
 
-        Vector3 newDirection =oldDirection;
+        Vector3 newDirection = oldDirection;
         if (Input.GetKeyDown("right"))
         {
             newDirection = new Vector3(1, 0, 0);
@@ -69,7 +48,8 @@ public class PlayerController : SnakePart
         {
             newDirection = new Vector3(0, -1, 0);
         }
-        
+
+        /*
         if (Input.touchCount>0)
         {
             Vector3 walkTowards = transform.position;
@@ -109,42 +89,68 @@ public class PlayerController : SnakePart
                 }
             }
         }
+        */
 
         if (Time.time - timeLastDirectionChange > timeToWalkOwnSize)
         {
-            if (newDirection != getDirection() && newDirection != getDirection() * -1.0f)
+            if (newDirection != currentDirection && newDirection != currentDirection * -1.0f)
             {
-                changeIntendedDirection(newDirection); //if player has not made a move, newDirection = oldDirection
+                currentDirection = newDirection; //if player has not made a move, newDirection = oldDirection
                 timeLastDirectionChange = Time.time;
             }
             else
             { 
                 //invalid move, do nothing
             }
-            oldDirection = newDirection; //to make sure we clear oldDirection, it will be ignored next time because it will be equal to getDirection()
+        }
+        oldDirection = newDirection;
+    }
+
+    protected override void IndependentMove()
+    {
+        if (teleporting==true)
+        {
+            myRigidbody.MovePosition(new Vector3(0, 0, transform.position.z));
+            teleporting = false;
         }
         else
         {
-            oldDirection = newDirection;
+            myRigidbody.MovePosition(transform.position + currentDirection * Time.fixedDeltaTime * speed);
         }
-
     }
 
-    protected override void Update()
+    protected void Update()
     {
-        base.Update();
+        directionalInput();
+        if ((snakeLength - initialSize) > oldSizeDiff+5 )
+        {
+            changeSnakeSpeed(speed + 0.5f);
+            oldSizeDiff = snakeLength - initialSize;
+            timeToWalkOwnSize = myRenderer.bounds.size.x / speed;
+        }
+        
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            teleporting = true;
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("snake part"))
+
+        Tagger tagger = collision.gameObject.GetComponent<Tagger>();
+        if (tagger)
         {
-            Destroy(gameObject);
-        }
-        else if (collision.gameObject.CompareTag("fruit"))
-        {
-            Debug.Log("fruit");
-            growParts();
+            if (tagger.containsCustomTag("obstacle"))
+            {
+                Destroy(gameObject);
+            }
+            else if (tagger.containsCustomTag("fruit"))
+            {
+
+                Destroy(collision.gameObject);
+                growParts();
+            }
         }
     }
 }

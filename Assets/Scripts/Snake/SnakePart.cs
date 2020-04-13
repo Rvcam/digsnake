@@ -1,96 +1,80 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using MyUtil;
 
-[RequireComponent(typeof (Rigidbody2D))]
+[RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(BoxCollider2D))]
+[RequireComponent(typeof(Tagger))]
 public class SnakePart : MonoBehaviour
 {
 
     #region variables
 
-    [Range(1,5)]
-    public int speed;
-    private Vector3 currentDirection;
-    private Vector3 intendedDirection;
+    [Range(1, 10)]
+    [SerializeField]
+    private int editorSpeed = 6;
+    protected float speed;
+
+    [Range(0, 1)]
+    [SerializeField]
+    private float distanceFactor; //the fraction of the snake part's total size that they use as distance from the snake in front
+
+    protected Vector3 currentDirection;
+
     protected GameObject childPart;
     public GameObject partToSpawn;
-    private SnakeBodyController partScript;
-    public Queue<Vector3> turnPositions;
+    protected SnakeBodyController childScript;
     protected SnakePart front;
-    private int lastTurnSquare;
-    private Queue<Vector3> directionsToFollow;
-    private bool isTurning = false;
-    private Renderer myRenderer;
-    private Rigidbody2D myRigidbody;
+
+    private Queue<Vector3> positionsAfterTurn;
+
+    protected Renderer myRenderer;
+    protected Rigidbody2D myRigidbody;
+
+    protected int snakeLength;
+
 
     #endregion
 
     #region movement
-    protected virtual void Move()
-    {
-         Vector3 moveBy = currentDirection * speed * Time.fixedDeltaTime;
-         myRigidbody.MovePosition(transform.position + moveBy);
-    }
 
-    protected void processTurn()
+    private void recursiveMovement()
     {
-        if (turnPositions.Count == 0 && intendedDirection != currentDirection)
-        {//independent movement
-            
-            isTurning = true;
-            turn();
-}
-        else if (turnPositions.Count > 0 && (turnPositions.Peek() - transform.position).magnitude < ((speed*Time.fixedDeltaTime)/2) )
-        {//following the square ahead, we are at a turn position
-            
-            isTurning = true;
-            turn();
-        }
-        else
-        {//no turns
-           
-            isTurning = false;
-        }
-    }
-
-    protected virtual void DetermineDirection()
-    {
-
-    }
-
-    protected void changeIntendedDirection(Vector3 newDirection)
-    {
-        if (currentDirection.magnitude < Mathf.Epsilon)
+        if (front == null)
         {
-            currentDirection = newDirection;
-        }
-        intendedDirection = newDirection;
-    }
-
-    protected virtual void turn()
-    {
-        if (turnPositions.Count > 0)
-        {
-            Vector3 newDirection = directionsToFollow.Dequeue();
-            Vector3 newPosition = turnPositions.Dequeue();
-            changeIntendedDirection(newDirection);
-
-            if (partScript != null)
-            {
-                partScript.turnPositions.Enqueue(newPosition);
-                partScript.directionsToFollow.Enqueue(newDirection);
-            }
+            IndependentMove();
         }
         else
         {
-            if (partScript != null)
+            if (front.positionsAfterTurn.Count > ((1.0f + distanceFactor) * myRenderer.bounds.size.x) / (Time.fixedDeltaTime * speed))
             {
-                partScript.turnPositions.Enqueue(transform.position);
-                partScript.directionsToFollow.Enqueue(intendedDirection);
+                myRigidbody.MovePosition(front.positionsAfterTurn.Peek());
+            }
+            else
+            {
+                //fica parado, implementar depois
             }
         }
-        currentDirection = intendedDirection;
+
+        while (positionsAfterTurn.Count > ((1.0f + distanceFactor) * myRenderer.bounds.size.x) / (Time.fixedDeltaTime * speed))
+        {
+            //we have moved too far and our trail is too long
+            positionsAfterTurn.Dequeue();
+        }
+
+        positionsAfterTurn.Enqueue(transform.position);
+
+        if (childScript)
+        {
+            childScript.currentDirection = currentDirection;
+            childScript.recursiveMovement();
+        }
+    }
+
+    protected virtual void IndependentMove()
+    {
+
     }
 
     #endregion
@@ -102,52 +86,61 @@ public class SnakePart : MonoBehaviour
         {
             Debug.LogError("Assign a part to spawn to the snake head");
         }
-        turnPositions = new Queue<Vector3>();
-        directionsToFollow = new Queue<Vector3>();
+
+        positionsAfterTurn = new Queue<Vector3>();
+        
         myRigidbody = GetComponent<Rigidbody2D>();
         myRenderer = GetComponent<Renderer>();
         myRigidbody.isKinematic = true;
         
-    }
+        GetComponent<Tagger>().addCustomTag("obstacle");
+        
+        snakeLength = 0;
 
-    protected virtual void Update()
-    {
-        DetermineDirection();
-        //Move();
+        if (speed < Mathf.Epsilon && editorSpeed > Mathf.Epsilon)
+        {
+            speed = editorSpeed / 2.0f;
+        }
     }
 
     protected virtual void FixedUpdate()
     {
-        Move();
-        processTurn();
-    }
-
-    public Vector3 getDirection()
-    {
-        return currentDirection;
-    }
-
-    public bool GetTurningStatus()
-    {
-        return isTurning;
+        if (front == null)
+        {
+            recursiveMovement();
+        }
     }
 
     #endregion
 
+
+    #region other recursive methods
     protected void growParts()
     {
+        snakeLength++;
         if (childPart == null)
         {
-            childPart = Instantiate(partToSpawn, transform.position+currentDirection*-1.0f * GetComponent<Renderer>().bounds.size.x, Quaternion.identity);
-            partScript = childPart.GetComponent<SnakeBodyController>();
-            partScript.front = this;
-            partScript.speed = speed;
-            partScript.partToSpawn = partToSpawn;
-            partScript.changeIntendedDirection(getDirection());
+            childPart = Instantiate(partToSpawn, transform.position+currentDirection* (-1.0f-distanceFactor) * myRenderer.bounds.size.x, Quaternion.identity);
+            childScript = childPart.GetComponent<SnakeBodyController>();
+            childScript.front = this;
+            childScript.speed = speed;
+            childScript.partToSpawn = partToSpawn;
+            childScript.distanceFactor = distanceFactor;
         }
         else
         {
-            childPart.GetComponent<SnakeBodyController>().growParts();
+            childScript.growParts();
         }
     }
+
+    protected void changeSnakeSpeed(float newSpeed)
+    {
+        speed = newSpeed;
+        if (childScript)
+        {
+            childScript.changeSnakeSpeed(newSpeed);
+        }
+    }
+
+    #endregion
 }
