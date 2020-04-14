@@ -17,7 +17,7 @@ public class PlayerController : SnakePart
     private bool teleporting;
     [SerializeField]
     [Range(0.3f, 3.0f)]
-    private float teleportingDistance;
+    private float teleportingDistance=3;
     private GameSceneController gameSceneController;
 
     public event Action<bool> Finished;
@@ -34,6 +34,7 @@ public class PlayerController : SnakePart
         timeLastDirectionChange = -timeToWalkOwnSize;
         oldDirection = currentDirection;
         gameSceneController = FindObjectOfType<GameSceneController>();
+        
     }
 
     protected void directionalInput()
@@ -156,17 +157,12 @@ public class PlayerController : SnakePart
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-
         Tagger tagger = collision.gameObject.GetComponent<Tagger>();
         if (tagger)
         {
             if (gameSceneController.gameOver == false)
             {
-                if (tagger.containsCustomTag("obstacle"))
-                {
-                    die();
-                }
-                else if (tagger.containsCustomTag("fruit"))
+                if (tagger.containsCustomTag("fruit"))
                 {
                     gameSceneController.numberOfFruits--;
                     Destroy(collision.gameObject);
@@ -175,6 +171,11 @@ public class PlayerController : SnakePart
             }
         }
     }
+    public void onChildObstacleHit()
+    {
+        die();
+    }
+
     private void die()
     {
         speed = 0;

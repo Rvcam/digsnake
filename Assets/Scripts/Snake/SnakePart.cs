@@ -93,8 +93,6 @@ public class SnakePart : MonoBehaviour
         myRenderer = GetComponent<SpriteRenderer>();
         myRigidbody.isKinematic = true;
         
-        GetComponent<Tagger>().addCustomTag("obstacle");
-        
         snakeLength = 0;
 
         if (speed < Mathf.Epsilon && editorSpeed > Mathf.Epsilon)

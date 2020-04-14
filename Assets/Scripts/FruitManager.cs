@@ -10,9 +10,9 @@ public class FruitManager : MonoBehaviour
     private GameObject fruit= null;
     private Vector2 fruitExtents;
     [SerializeField]
-    private float minSpawnTime;
+    private float minSpawnTime=2;
     [SerializeField]
-    private float maxSpawnTime;
+    private float maxSpawnTime=2;
     private GameSceneController gameSceneController;
 
     // Start is called before the first frame update
