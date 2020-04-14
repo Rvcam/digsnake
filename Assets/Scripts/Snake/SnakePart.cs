@@ -29,7 +29,7 @@ public class SnakePart : MonoBehaviour
 
     private Queue<Vector3> positionsAfterTurn;
 
-    protected Renderer myRenderer;
+    protected SpriteRenderer myRenderer;
     protected Rigidbody2D myRigidbody;
 
     protected int snakeLength;
@@ -47,7 +47,7 @@ public class SnakePart : MonoBehaviour
         }
         else
         {
-            if (front.positionsAfterTurn.Count > ((1.0f + distanceFactor) * myRenderer.bounds.size.x) / (Time.fixedDeltaTime * speed))
+            if (front.positionsAfterTurn.Count >0)// ((1.0f + distanceFactor) * myRenderer.bounds.size.x) / (Time.fixedDeltaTime * speed))
             {
                 myRigidbody.MovePosition(front.positionsAfterTurn.Peek());
             }
@@ -90,7 +90,7 @@ public class SnakePart : MonoBehaviour
         positionsAfterTurn = new Queue<Vector3>();
         
         myRigidbody = GetComponent<Rigidbody2D>();
-        myRenderer = GetComponent<Renderer>();
+        myRenderer = GetComponent<SpriteRenderer>();
         myRigidbody.isKinematic = true;
         
         GetComponent<Tagger>().addCustomTag("obstacle");
@@ -118,7 +118,7 @@ public class SnakePart : MonoBehaviour
     protected void growParts()
     {
         snakeLength++;
-        if (childPart == null)
+        if (childPart == null )
         {
             childPart = Instantiate(partToSpawn, transform.position+currentDirection* (-1.0f-distanceFactor) * myRenderer.bounds.size.x, Quaternion.identity);
             childScript = childPart.GetComponent<SnakeBodyController>();
@@ -127,7 +127,7 @@ public class SnakePart : MonoBehaviour
             childScript.partToSpawn = partToSpawn;
             childScript.distanceFactor = distanceFactor;
         }
-        else
+        else if (childScript!=null) //just in case the child object gets destroyed prior to this call
         {
             childScript.growParts();
         }

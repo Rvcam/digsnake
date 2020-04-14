@@ -13,6 +13,7 @@ public class FruitManager : MonoBehaviour
     private float minSpawnTime;
     [SerializeField]
     private float maxSpawnTime;
+    private GameSceneController gameSceneController;
 
     // Start is called before the first frame update
     void Start()
@@ -23,12 +24,15 @@ public class FruitManager : MonoBehaviour
         Instantiate(fruit, gsController.bounds.bottomRight, Quaternion.identity);
         Instantiate(fruit, gsController.bounds.topLeft, Quaternion.identity);
         Instantiate(fruit, gsController.bounds.topRight, Quaternion.identity);
+        gameSceneController = FindObjectOfType<GameSceneController>();
+        gameSceneController.numberOfFruits += 5;
         StartCoroutine(spawnRandomFruit());
     }
 
     private IEnumerator spawnRandomFruit()
     {
-        while (true)
+        
+        while (gameSceneController.gameOver==false)
         {
             Vector3 randomPosition = new Vector3(
                 Random.Range(gsController.bounds.bottomLeft.x, gsController.bounds.topRight.x),
@@ -47,6 +51,7 @@ public class FruitManager : MonoBehaviour
             }
             if (i==colliders.Length)
             {
+                gameSceneController.numberOfFruits++;
                 Instantiate(fruit, randomPosition, Quaternion.identity);
             }
             yield return new WaitForSeconds(Random.Range(minSpawnTime,maxSpawnTime));

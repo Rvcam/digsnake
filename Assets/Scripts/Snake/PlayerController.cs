@@ -3,26 +3,37 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 using MyUtil;
+using UnityEngine.SceneManagement;
+
 public class PlayerController : SnakePart
 {
+    #region variables and events
     private Vector3 touchStartPosition;
     private float timeToWalkOwnSize;
     private float timeLastDirectionChange;
-    private int initialSize=0;
+    private int initialSize = 0;
     Vector3 oldDirection;
     private int oldSizeDiff;
     private bool teleporting;
+    [SerializeField]
+    [Range(0.3f, 3.0f)]
+    private float teleportingDistance;
+    private GameSceneController gameSceneController;
 
+    public event Action<bool> Finished;
+
+    #endregion
     protected override void Start()
     {
         base.Start();
-        if (speed<Mathf.Epsilon)
+        if (speed < Mathf.Epsilon)
         {
             print("Speed not set");
         }
-        timeToWalkOwnSize = GetComponent<Renderer>().bounds.size.x/speed;
+        timeToWalkOwnSize = GetComponent<Renderer>().bounds.size.x / speed;
         timeLastDirectionChange = -timeToWalkOwnSize;
         oldDirection = currentDirection;
+        gameSceneController = FindObjectOfType<GameSceneController>();
     }
 
     protected void directionalInput()
@@ -99,7 +110,7 @@ public class PlayerController : SnakePart
                 timeLastDirectionChange = Time.time;
             }
             else
-            { 
+            {
                 //invalid move, do nothing
             }
         }
@@ -108,9 +119,9 @@ public class PlayerController : SnakePart
 
     protected override void IndependentMove()
     {
-        if (teleporting==true)
+        if (teleporting == true)
         {
-            myRigidbody.MovePosition(new Vector3(0, 0, transform.position.z));
+            myRigidbody.MovePosition(transform.position + currentDirection * teleportingDistance);
             teleporting = false;
         }
         else
@@ -122,16 +133,24 @@ public class PlayerController : SnakePart
     protected void Update()
     {
         directionalInput();
-        if ((snakeLength - initialSize) > oldSizeDiff+5 )
+        if ((snakeLength - initialSize) > oldSizeDiff + 5)
         {
             changeSnakeSpeed(speed + 0.5f);
             oldSizeDiff = snakeLength - initialSize;
             timeToWalkOwnSize = myRenderer.bounds.size.x / speed;
         }
-        
+
         if (Input.GetKeyDown(KeyCode.Space))
         {
             teleporting = true;
+        }
+        if (gameSceneController.numberOfFruits <= 0 && gameSceneController.gameOver==false)
+        {
+            win();
+        }
+        if (gameSceneController.gameOver == true && Input.GetKeyDown(KeyCode.Return))
+        {
+            SceneManager.LoadScene("RedLab");
         }
     }
 
@@ -141,16 +160,43 @@ public class PlayerController : SnakePart
         Tagger tagger = collision.gameObject.GetComponent<Tagger>();
         if (tagger)
         {
-            if (tagger.containsCustomTag("obstacle"))
+            if (gameSceneController.gameOver == false)
             {
-                Destroy(gameObject);
-            }
-            else if (tagger.containsCustomTag("fruit"))
-            {
-
-                Destroy(collision.gameObject);
-                growParts();
+                if (tagger.containsCustomTag("obstacle"))
+                {
+                    die();
+                }
+                else if (tagger.containsCustomTag("fruit"))
+                {
+                    gameSceneController.numberOfFruits--;
+                    Destroy(collision.gameObject);
+                    growParts();
+                }
             }
         }
+    }
+    private void die()
+    {
+        speed = 0;
+        if (childScript)
+        {
+            childScript.transform.Translate(new Vector3(0, 0, -0.1f));
+            childScript.StartCoroutine(childScript.blink(Color.red));
+        }
+        Finished(false);
+        myRenderer.color = new Color(1, 1, 1, 0);
+    }
+
+    private void win()
+    {
+        speed = 0;
+        if (childScript)
+        {
+            childScript.transform.Translate(new Vector3(0, 0, -0.1f));
+            childScript.StartCoroutine(childScript.blink(Color.green));
+        }
+        Finished(true);
+        myRenderer.color = new Color(1, 1, 1, 0);
+            
     }
 }

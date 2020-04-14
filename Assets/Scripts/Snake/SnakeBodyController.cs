@@ -12,4 +12,17 @@ public class SnakeBodyController : SnakePart
         lastPosition = transform.position;
     }
 
+
+    public IEnumerator blink(Color newColor)
+    {
+        Color oldColor = myRenderer.color;
+        Color actualColor = newColor;
+        while (true)
+        {
+            myRenderer.color = actualColor;
+            actualColor = actualColor == newColor ? oldColor : newColor;
+            yield return new WaitForSeconds(0.75f);
+        }
+    }
+
 }
