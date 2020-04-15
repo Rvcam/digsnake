@@ -618,7 +618,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.04, y: 0.04}
+  m_Size: {x: 0.06, y: 0.06}
   m_EdgeRadius: 0
 --- !u!50 &997685883
 Rigidbody2D:
@@ -1042,8 +1042,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 998031c1a4d7ccd4fbaa3c7ba929f621, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  editorSpeed: 6
-  distanceFactor: 0.1
+  editorSpeed: 9
+  distanceFactor: 0.3
   partToSpawn: {fileID: 6735317191332320863, guid: 2e5a02b590ebd224ab120699c83ea15a,
     type: 3}
   teleportingDistance: 1
