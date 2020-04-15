@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using MyUtil;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameSceneController : MonoBehaviour
 {
@@ -21,6 +22,10 @@ public class GameSceneController : MonoBehaviour
 
     private void Awake()
     {
+        if (FindObjectOfType<GameManager>()==null)
+        {
+            SceneManager.LoadScene("preload");
+        }
         float width = GetComponent<BoxCollider2D>().bounds.size.x;
         float height = GetComponent<BoxCollider2D>().bounds.size.y;
         _bounds = new Rect (transform.position.x-width/2, transform.position.y-height/2, width, height);
