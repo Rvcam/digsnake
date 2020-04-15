@@ -6,14 +6,24 @@ using UnityEngine.UI;
 
 public class GameSceneController : MonoBehaviour
 {
-    private Rectangle _bounds;
-    private bool _gameOver;
+    //public Rectangle bounds { get => _bounds; }
+    //private Rectangle _bounds;
+
+    public Rect bounds { get => _bounds; }
+    private Rect _bounds;
+
     public bool gameOver { get => _gameOver; }
-    public Rectangle bounds { get => _bounds; }
+    private bool _gameOver;
+    
     public int numberOfFruits;
+    [Range(0f, 2f)]
+    public float roomSpeed;
+
     private void Awake()
     {
-        _bounds = new Rectangle(transform.position, GetComponent<BoxCollider2D>().bounds.size.x, GetComponent<BoxCollider2D>().bounds.size.y);
+        float width = GetComponent<BoxCollider2D>().bounds.size.x;
+        float height = GetComponent<BoxCollider2D>().bounds.size.y;
+        _bounds = new Rect (transform.position.x-width/2, transform.position.y-height/2, width, height);
         numberOfFruits = 0;
     }
 

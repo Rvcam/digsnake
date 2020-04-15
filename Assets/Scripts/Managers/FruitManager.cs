@@ -20,40 +20,37 @@ public class FruitManager : MonoBehaviour
     {
         gsController = FindObjectOfType<GameSceneController>();
         fruitExtents = fruit.GetComponent<BoxCollider2D>().size;
-        Instantiate(fruit, gsController.bounds.bottomLeft, Quaternion.identity);
-        Instantiate(fruit, gsController.bounds.bottomRight, Quaternion.identity);
-        Instantiate(fruit, gsController.bounds.topLeft, Quaternion.identity);
-        Instantiate(fruit, gsController.bounds.topRight, Quaternion.identity);
         gameSceneController = FindObjectOfType<GameSceneController>();
-        gameSceneController.numberOfFruits += 5;
+        gameSceneController.numberOfFruits += FindObjectsOfType<Fruit>().Length;
         StartCoroutine(spawnRandomFruit());
     }
 
     private IEnumerator spawnRandomFruit()
     {
-        
         while (gameSceneController.gameOver==false)
         {
             Vector3 randomPosition = new Vector3(
-                Random.Range(gsController.bounds.bottomLeft.x, gsController.bounds.topRight.x),
-                Random.Range(gsController.bounds.bottomLeft.y, gsController.bounds.topRight.y),
-                gsController.bounds.topRight.z);
+                Random.Range(gsController.bounds.min.x, gsController.bounds.max.x),
+                Random.Range(gsController.bounds.min.y, gsController.bounds.max.y),
+                gameSceneController.transform.position.z);
             
-            int i;
+            int accumulator;
             Collider2D[] colliders = Physics2D.OverlapBoxAll(randomPosition, 2 * fruitExtents, 0);
-            for (i=0; i<colliders.Length; i++)
+            for (accumulator=0; accumulator<colliders.Length; accumulator++)
             {
-                Tagger colTagger = colliders[i].gameObject.GetComponent<Tagger>();
+                Tagger colTagger = colliders[accumulator].gameObject.GetComponent<Tagger>();
                 if (colTagger!=null && colTagger.containsCustomTag("obstacle"))
                 {
                     break;
                 }
             }
-            if (i==colliders.Length)
+
+            if (accumulator==colliders.Length)
             {
                 gameSceneController.numberOfFruits++;
                 Instantiate(fruit, randomPosition, Quaternion.identity);
             }
+
             yield return new WaitForSeconds(Random.Range(minSpawnTime,maxSpawnTime));
         }
     }

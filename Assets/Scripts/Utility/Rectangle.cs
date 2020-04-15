@@ -13,6 +13,7 @@ namespace MyUtil
         public Vector3 topRight { get => _topLeft + new Vector3(length, 0, 0); }
         public Vector3 bottomRight { get => _topLeft + new Vector3(length, -height, 0); }
         public Vector3 bottomLeft { get => _topLeft + new Vector3(0, -height, 0); }
+        public Vector3 center { get => _topLeft + new Vector3(length/2, -height/2, 0); }
 
         public Rectangle(Vector3 center, float length, float height)
         {

@@ -147,7 +147,7 @@ public class PlayerController : SnakePart
         }
         if (gameSceneController.numberOfFruits <= 0 && gameSceneController.gameOver==false)
         {
-            win();
+            //win();
         }
         if (gameSceneController.gameOver == true && Input.GetKeyDown(KeyCode.Return))
         {
