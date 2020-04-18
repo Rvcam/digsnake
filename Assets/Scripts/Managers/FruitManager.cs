@@ -99,7 +99,7 @@ public class FruitManager : MonoBehaviour
         return maxSpawnTime;
     }
 
-    private void adjustSpawnArea()
+    public void adjustSpawnArea()
     {
         if (gameSceneController.getRoomDirectionAsVector().x > Mathf.Epsilon)
         {

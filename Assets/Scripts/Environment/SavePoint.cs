@@ -6,25 +6,43 @@ using MyUtil;
 
 public class SavePoint : MonoBehaviour
 {
+    private enum States
+    {
+        OffScreen,
+        OnScreen,
+        FarEnough,
+        Judging,
+        ReadyToActivate,
+        Activated
+    }
+
+    private GameSceneController gameSceneController;
+
     [SerializeField]
     private Transform cameraTransform;
     private Vector3 targetPosition;
-    private GameSceneController gameSceneController;
-    private float environmentalSpeed;
+
     [SerializeField]
     private float errorMarginFactor;
-    public event Action arrivedAtSavePoint;
-    private bool readyToActivate;
-    private bool activated;
+
     [Range(0f, 4f)]
     public float futureSpeed;
     public Directions futureDirection;
-    public event Action<SavePoint, bool> savePointReached;
-    [SerializeField]
-    [Range(1, 4)]
-    private float inactiveTime;
-    private bool farEnough;
-    private bool targetAdjusted;
+    
+    private States state=States.OffScreen;
+
+    public event Action<SavePoint, bool> savePointActivated;
+    public event Action arrivedAtSavePoint;
+
+    private int savedLength;
+
+    private void Awake()
+    {
+        if (savedLength == 0)
+        {
+            savedLength = 1;
+        }
+    }
 
     void Start()
     {
@@ -35,13 +53,8 @@ public class SavePoint : MonoBehaviour
         gameSceneController = FindObjectOfType<GameSceneController>();
         targetPosition = cameraTransform.position; // it will be adjusted later at adjustTarget
         targetPosition.z = transform.position.z;
-        environmentalSpeed = gameSceneController.roomSpeed;
-        readyToActivate = false;
-        activated = false;
-        farEnough = true;
-        targetAdjusted = false;
     }
-
+     
     public void adjustTarget()
     {
        switch (gameSceneController.getRoomDirection())
@@ -63,27 +76,23 @@ public class SavePoint : MonoBehaviour
                 targetPosition.x = transform.position.x - gameSceneController.getBounds().width / 2 - GetComponent<SpriteRenderer>().bounds.size.x / 2;
                 break;
         }
-        targetAdjusted = true;
     }
 
     void Update()
     {
-        if (targetAdjusted)
+        if (state == States.OnScreen && (transform.position - targetPosition).magnitude > gameSceneController.roomSpeed * Time.deltaTime * errorMarginFactor)
         {
-            if (farEnough && (transform.position - targetPosition).magnitude < environmentalSpeed * Time.deltaTime * errorMarginFactor)
-            {
-                arrivedAtSavePoint();
-                farEnough = false;
-            }
+            state = States.FarEnough;
         }
-        if ((transform.position - targetPosition).magnitude > environmentalSpeed * Time.deltaTime * 6 * errorMarginFactor)
+        if (state == States.FarEnough && (transform.position - targetPosition).magnitude < gameSceneController.roomSpeed * Time.deltaTime * errorMarginFactor)
         {
-            farEnough = true;
+            arrivedAtSavePoint();
+            state = States.Judging;
         }
-        if (targetAdjusted && gameSceneController.roomSpeed==0 && activated == false && readyToActivate==false && gameSceneController.isCollectingWell())
+        if (state==States.Judging && gameSceneController.roomSpeed==0 && gameSceneController.isCollectingWell())
         {
             GetComponent<SpriteRenderer>().color = new Color(100f/256, 240f/256, 70f/256);
-            readyToActivate = true;
+            state = States.ReadyToActivate;
         }
     }
 
@@ -92,31 +101,35 @@ public class SavePoint : MonoBehaviour
         Tagger tagger = collision.gameObject.GetComponent<Tagger>();
         if (tagger != null && tagger.containsCustomTag("player"))
         {
-            if (activated == false && readyToActivate == true)
+            if (state == States.ReadyToActivate)
             {
-                readyToActivate = false;
-                activated = true;
+                savedLength = collision.gameObject.GetComponent<PlayerController>().getLength();
+                state = States.Activated;
                 GetComponent<SpriteRenderer>().color = new Color(70f / 256, 220f / 256, 200f / 256, 0.5f);
-                savePointReached(this, true);
-            }
-            else if (activated == true && readyToActivate == true)
-            {
-                GetComponent<SpriteRenderer>().color = new Color(70f / 256, 220f / 256, 200f / 256, 0.5f);
-                readyToActivate = false;
-                savePointReached(this, false);
+                savePointActivated(this, true);
             }
         }
         else if (tagger!=null && tagger.containsCustomTag("outer screen bounds"))
         {
-            if (activated == false)
+            if (state==States.OffScreen)
             {
+                state = States.OnScreen;
                 adjustTarget();
-            }
-            else
-            {
-                gameObject.SetActive(false);
             }
         }
     }
+
+    public int getSavedLength()
+    {
+        return savedLength;
+    }
+    public void setSavedLength(int newLength)
+    {
+        savedLength = newLength;
+    }
+    public void setAsActivated()
+    {
+        state = States.Activated;
+        GetComponent<SpriteRenderer>().color = new Color(70f / 256, 220f / 256, 200f / 256, 0.5f);
+    }
 }
-;

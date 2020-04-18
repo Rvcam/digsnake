@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class EnvironmentalObject : MonoBehaviour
 {
-    private float roomSpeed = 0;
     private GameSceneController gameSceneController;
 
     private void Start()

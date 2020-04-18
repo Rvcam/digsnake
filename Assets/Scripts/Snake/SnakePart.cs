@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using MyUtil;
+using System.Collections;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(BoxCollider2D))]
@@ -34,7 +35,6 @@ public class SnakePart : MonoBehaviour
 
     protected int snakeLength;
     protected GameSceneController gameSceneController;
-
     #endregion
 
     #region movement
@@ -81,6 +81,8 @@ public class SnakePart : MonoBehaviour
     #region basics
     protected virtual void Start()
     {
+        gameSceneController = FindObjectOfType<GameSceneController>();
+        
         if (partToSpawn == null)
         {
             Debug.LogError("Assign a part to spawn to the snake head");
@@ -90,18 +92,11 @@ public class SnakePart : MonoBehaviour
         
         myRigidbody = GetComponent<Rigidbody2D>();
         myRenderer = GetComponent<SpriteRenderer>();
-        myRigidbody.isKinematic = true;
         
-        snakeLength = 0;
-
         if (speed < Mathf.Epsilon && editorSpeed > Mathf.Epsilon)
         {
             speed = editorSpeed / 2.0f;
         }
-
-        gameSceneController = FindObjectOfType<GameSceneController>();
-            
-
     }
 
     protected virtual void FixedUpdate()
@@ -114,12 +109,11 @@ public class SnakePart : MonoBehaviour
 
     #endregion
 
-
     #region other recursive methods
     protected void growParts()
     {
         snakeLength++;
-        if (childPart == null )
+        if (childScript == null )
         {
             childPart = Instantiate(partToSpawn, transform.position+currentDirection* (-1.0f-distanceFactor) * myRenderer.bounds.size.x, Quaternion.identity);
             childScript = childPart.GetComponent<SnakeBodyController>();
@@ -128,6 +122,7 @@ public class SnakePart : MonoBehaviour
             childScript.partToSpawn = partToSpawn;
             childScript.currentDirection = currentDirection;
             childScript.distanceFactor = distanceFactor;
+            childScript.snakeLength = snakeLength;
         }
         else if (childScript!=null) //just in case the child object gets destroyed prior to this call
         {
@@ -142,6 +137,52 @@ public class SnakePart : MonoBehaviour
         {
             childScript.changeSnakeSpeed(newSpeed);
         }
+    }
+
+    public void setLength(int newLength)
+    {
+        if (newLength>snakeLength)
+        {
+            StartCoroutine(growAtOnce(newLength-snakeLength));
+            
+        }
+        else if (newLength<snakeLength)
+        {
+            destroyParts(snakeLength - newLength, 0);
+        }
+    }
+
+    private IEnumerator growAtOnce(int numberToGrow)
+    {
+        for (int i = numberToGrow; i > 0; i--)
+        {
+            growParts();
+            yield return new WaitForSeconds(((1.0f+distanceFactor) * myRenderer.bounds.size.x) / speed); //to give the part time to grow a trail
+        }
+    }
+
+    private void destroyParts(int numberToDestroy, int myIndex)
+    {
+        if (childScript)
+        {
+            childScript.destroyParts(numberToDestroy, myIndex + 1);
+        }
+        if (snakeLength - myIndex <= numberToDestroy)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            snakeLength = snakeLength - numberToDestroy;
+        }
+    }
+
+    #endregion
+
+    #region other
+    public int getLength()
+    {
+        return snakeLength;
     }
 
     #endregion

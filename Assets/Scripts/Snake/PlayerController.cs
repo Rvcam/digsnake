@@ -34,7 +34,7 @@ public class PlayerController : SnakePart
         timeLastDirectionChange = -timeToWalkOwnSize;
         oldDirection = currentDirection;
         gameSceneController = FindObjectOfType<GameSceneController>();
-        
+        snakeLength++;
     }
 
     protected void directionalInput()
@@ -107,6 +107,7 @@ public class PlayerController : SnakePart
         {
             //win();
         }
+        transform.right = currentDirection;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -153,5 +154,25 @@ public class PlayerController : SnakePart
         Finished(true);
         myRenderer.color = new Color(1, 1, 1, 0);
             
+    }
+
+    public void delayedGrowth(int numberToGrow)
+    {
+        StartCoroutine(coDelayedGrowth(numberToGrow));
+    }
+
+    private IEnumerator coDelayedGrowth(int numberToGrow)
+    {
+        while (isReady()==false)
+        {
+            yield return new WaitForEndOfFrame();
+        }
+        yield return new WaitForSeconds(2 * myRenderer.bounds.size.x / speed);
+        setLength(snakeLength + numberToGrow);
+    }
+
+    public bool isReady()
+    {
+        return currentDirection.magnitude > Mathf.Epsilon && speed > Mathf.Epsilon;
     }
 }
