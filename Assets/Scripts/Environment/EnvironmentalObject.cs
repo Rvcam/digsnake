@@ -6,14 +6,14 @@ public class EnvironmentalObject : MonoBehaviour
 {
     private float roomSpeed = 0;
     private GameSceneController gameSceneController;
+
     private void Start()
     {
         gameSceneController = FindObjectOfType<GameSceneController>();
-        roomSpeed = gameSceneController.roomSpeed;
     }
 
     private void Update()
     {
-        transform.Translate(-roomSpeed*Time.deltaTime, 0, 0);
+        transform.Translate(-1 * gameSceneController.getRoomDirectionAsVector()*gameSceneController.roomSpeed*Time.deltaTime, Space.World);
     }
 }

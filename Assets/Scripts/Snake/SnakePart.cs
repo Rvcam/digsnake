@@ -33,7 +33,7 @@ public class SnakePart : MonoBehaviour
     protected Rigidbody2D myRigidbody;
 
     protected int snakeLength;
-
+    protected GameSceneController gameSceneController;
 
     #endregion
 
@@ -67,7 +67,6 @@ public class SnakePart : MonoBehaviour
 
         if (childScript)
         {
-            childScript.currentDirection = currentDirection;
             childScript.recursiveMovement();
         }
     }
@@ -99,6 +98,10 @@ public class SnakePart : MonoBehaviour
         {
             speed = editorSpeed / 2.0f;
         }
+
+        gameSceneController = FindObjectOfType<GameSceneController>();
+            
+
     }
 
     protected virtual void FixedUpdate()
@@ -123,6 +126,7 @@ public class SnakePart : MonoBehaviour
             childScript.front = this;
             childScript.speed = speed;
             childScript.partToSpawn = partToSpawn;
+            childScript.currentDirection = currentDirection;
             childScript.distanceFactor = distanceFactor;
         }
         else if (childScript!=null) //just in case the child object gets destroyed prior to this call

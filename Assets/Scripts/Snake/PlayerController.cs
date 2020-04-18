@@ -18,9 +18,9 @@ public class PlayerController : SnakePart
     [SerializeField]
     [Range(0.3f, 3.0f)]
     private float teleportingDistance=3;
-    private GameSceneController gameSceneController;
 
     public event Action<bool> Finished;
+    public event Action FruitCollected;
 
     #endregion
     protected override void Start()
@@ -61,53 +61,11 @@ public class PlayerController : SnakePart
             newDirection = new Vector3(0, -1, 0);
         }
 
-        /*
-        if (Input.touchCount>0)
-        {
-            Vector3 walkTowards = transform.position;
-
-            if (Input.GetTouch(0).phase == TouchPhase.Began)
-            {
-                touchStartPosition = Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position);
-            }
-            else if (Input.GetTouch(0).phase == TouchPhase.Ended)
-            {
-                walkTowards = Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position) - touchStartPosition;
-
-                if (walkTowards.magnitude > 0.5)
-                {
-                    if (Math.Abs(walkTowards.x) > Math.Abs(walkTowards.y))
-                    {
-                        if (walkTowards.x > 0)
-                        {
-                            newDirection = new Vector3(1, 0, 0);
-                        }
-                        else
-                        {
-                            newDirection = new Vector3(-1, 0, 0);
-                        }
-                    }
-                    else
-                    {
-                        if (walkTowards.y > 0)
-                        {
-                            newDirection = new Vector3(0, 1, 0);
-                        }
-                        else
-                        {
-                            newDirection = new Vector3(0, -1, 0);
-                        }
-                    }
-                }
-            }
-        }
-        */
-
         if (Time.time - timeLastDirectionChange > timeToWalkOwnSize)
         {
             if (newDirection != currentDirection && newDirection != currentDirection * -1.0f)
             {
-                currentDirection = newDirection; //if player has not made a move, newDirection = oldDirection
+                currentDirection= newDirection; //if player has not made a move, newDirection = oldDirection
                 timeLastDirectionChange = Time.time;
             }
             else
@@ -147,11 +105,7 @@ public class PlayerController : SnakePart
         }
         if (gameSceneController.numberOfFruits <= 0 && gameSceneController.gameOver==false)
         {
-            win();
-        }
-        if (gameSceneController.gameOver == true && Input.GetKeyDown(KeyCode.Return))
-        {
-            SceneManager.LoadScene("RedLab");
+            //win();
         }
     }
 
@@ -164,7 +118,7 @@ public class PlayerController : SnakePart
             {
                 if (tagger.containsCustomTag("fruit"))
                 {
-                    gameSceneController.numberOfFruits--;
+                    FruitCollected();
                     Destroy(collision.gameObject);
                     growParts();
                 }

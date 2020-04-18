@@ -12,7 +12,6 @@ public class SnakeBodyController : SnakePart
         lastPosition = transform.position;
     }
 
-
     public IEnumerator blink(Color newColor)
     {
         Color oldColor = myRenderer.color;
