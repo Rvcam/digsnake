@@ -15,19 +15,24 @@ public class FruitManager : MonoBehaviour
     private float maxSpawnTime=2;
     private GameSceneController gameSceneController;
     private Rect bounds;
-    public event Action spawned;
-    private float spawnHeight;
-    private float spawnWidth;
+    public event Action Spawned;
+    private float horizontalSpawnHeight;
+    private float horizontalSpawnWidth;
+    private float verticalSpawnHeight;
+    private float verticalSpawnWidth;
     Coroutine spawner;
     // Start is called before the first frame update
     void Start()
     {
         fruitExtents = fruit.GetComponent<BoxCollider2D>().size;
         gameSceneController = FindObjectOfType<GameSceneController>();
-        controlSpawning(true);
-        spawnWidth = GetComponent<BoxCollider2D>().bounds.size.x;
-        spawnHeight = GetComponent<BoxCollider2D>().bounds.size.y;
+        horizontalSpawnWidth = GetComponents<BoxCollider2D>()[0].bounds.size.x;
+        horizontalSpawnHeight = GetComponents<BoxCollider2D>()[0].bounds.size.y;
+        verticalSpawnWidth = GetComponents<BoxCollider2D>()[1].bounds.size.x;
+        verticalSpawnHeight = GetComponents<BoxCollider2D>()[1].bounds.size.y;
+
         adjustSpawnArea();
+        controlSpawning(true);
         gameSceneController.directionChanged += adjustSpawnArea;
     }
 
@@ -42,7 +47,7 @@ public class FruitManager : MonoBehaviour
                 gameSceneController.transform.position.z);
             
             int accumulator;
-            Collider2D[] colliders = Physics2D.OverlapBoxAll(randomPosition, 2 * fruitExtents, 0);
+            Collider2D[] colliders = Physics2D.OverlapBoxAll(randomPosition, fruitExtents, 0);
             for (accumulator=0; accumulator<colliders.Length; accumulator++)
             {
                 Tagger colTagger = colliders[accumulator].gameObject.GetComponent<Tagger>();
@@ -54,9 +59,8 @@ public class FruitManager : MonoBehaviour
 
             if (accumulator==colliders.Length)
             {
-                spawned();
-                gameSceneController.numberOfFruits++;
                 Instantiate(fruit, randomPosition, Quaternion.identity);
+                Spawned();
             }
         }
     }
@@ -70,10 +74,6 @@ public class FruitManager : MonoBehaviour
                 StopCoroutine(spawner);
                 spawner = null;
             }
-            else
-            {
-                Debug.LogError("tried to stop fruit spawn when it's already stopped");
-            }
         }
         else if (shouldSpawn)
         {
@@ -81,11 +81,6 @@ public class FruitManager : MonoBehaviour
             {
                 spawner = StartCoroutine(spawnRandomFruit());
             }
-            else
-            {
-                Debug.LogError("tried to start fruit spawn when it's already started");
-            }
-
         }
     }
 
@@ -99,23 +94,28 @@ public class FruitManager : MonoBehaviour
         return maxSpawnTime;
     }
 
-    public void adjustSpawnArea()
+    private void adjustSpawnArea()
     {
-        if (gameSceneController.getRoomDirectionAsVector().x > Mathf.Epsilon)
+        if (gameSceneController != null)
         {
-            bounds = new Rect(transform.position.x, transform.position.y - spawnHeight / 2, spawnWidth, spawnHeight);
-        }
-        else if (gameSceneController.getRoomDirectionAsVector().x < -Mathf.Epsilon)
-        {
-            bounds = new Rect(transform.position.x - spawnWidth, transform.position.y - spawnHeight / 2, spawnWidth, spawnHeight);
-        }
-        else if (gameSceneController.getRoomDirectionAsVector().y > Mathf.Epsilon)
-        {
-            bounds = new Rect(transform.position.x - spawnWidth / 2, transform.position.y, spawnWidth, spawnHeight);
-        }
-        else if (gameSceneController.getRoomDirectionAsVector().y < -Mathf.Epsilon)
-        {
-            bounds = new Rect(transform.position.x - spawnWidth / 2, transform.position.y-spawnHeight, spawnWidth, spawnHeight);
+            switch (gameSceneController.getRoomDirection())
+            {
+                case Directions.Right:
+                    bounds = new Rect(transform.position.x, transform.position.y - horizontalSpawnHeight / 2, horizontalSpawnWidth, horizontalSpawnHeight);
+                    break;
+
+                case Directions.Left:
+                    bounds = new Rect(transform.position.x - horizontalSpawnWidth, transform.position.y - horizontalSpawnHeight / 2, horizontalSpawnWidth, horizontalSpawnHeight);
+                    break;
+
+                case Directions.Up:
+                    bounds = new Rect(transform.position.x - verticalSpawnWidth / 2, transform.position.y, verticalSpawnWidth, verticalSpawnHeight);
+                    break;
+
+                case Directions.Down:
+                    bounds = new Rect(transform.position.x - verticalSpawnWidth / 2, transform.position.y - horizontalSpawnHeight, verticalSpawnWidth, verticalSpawnHeight);
+                    break;
+            }
         }
     }
 }

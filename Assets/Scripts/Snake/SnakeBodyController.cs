@@ -1,10 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MyUtil;
 
 public class SnakeBodyController : SnakePart
 {
     Vector3 lastPosition;
+    Animator animator;
+    protected override void Start()
+    {
+        base.Start();
+        animator = GetComponent<Animator>();
+    }
+
     protected override void FixedUpdate()
     {
         base.FixedUpdate();
@@ -23,5 +31,4 @@ public class SnakeBodyController : SnakePart
             yield return new WaitForSeconds(0.75f);
         }
     }
-
 }

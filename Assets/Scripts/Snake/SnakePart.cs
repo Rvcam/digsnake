@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using MyUtil;
 using System.Collections;
+using UnityEngine.Experimental.Rendering.Universal;
 
-[RequireComponent(typeof(Rigidbody2D))]
-[RequireComponent(typeof(BoxCollider2D))]
 [RequireComponent(typeof(Tagger))]
 public class SnakePart : MonoBehaviour
 {
@@ -32,6 +31,7 @@ public class SnakePart : MonoBehaviour
 
     protected SpriteRenderer myRenderer;
     protected Rigidbody2D myRigidbody;
+    protected Light2D myLight;
 
     protected int snakeLength;
     protected GameSceneController gameSceneController;
@@ -82,21 +82,47 @@ public class SnakePart : MonoBehaviour
     protected virtual void Start()
     {
         gameSceneController = FindObjectOfType<GameSceneController>();
-        
+
         if (partToSpawn == null)
         {
             Debug.LogError("Assign a part to spawn to the snake head");
         }
 
         positionsAfterTurn = new Queue<Vector3>();
-        
+
         myRigidbody = GetComponent<Rigidbody2D>();
-        myRenderer = GetComponent<SpriteRenderer>();
-        
+        myRenderer = GetComponentInChildren<SpriteRenderer>();
+        myLight = GetComponentInChildren<Light2D>();
+
+
         if (speed < Mathf.Epsilon && editorSpeed > Mathf.Epsilon)
         {
             speed = editorSpeed / 2.0f;
         }
+
+
+        if (front != null)
+        {
+            if (((snakeLength-2)/3) % 2 == 1)
+            {
+                foreach (Light2D light in GetComponentsInChildren<Light2D>())
+                {
+                    if (light.gameObject.name != "Core Light")
+                    {
+                        if (light.color.b < 0.1f)
+                        {
+                            light.color = new Color(0f, 0.7333f, 1.0f);
+                        }
+                        else if (light.color.r < 0.1f)
+                        {
+                            light.color = new Color(1.0f, 0.2666f, 0f);
+                        }
+                    }
+                }
+            }
+        }
+    
+        
     }
 
     protected virtual void FixedUpdate()
@@ -116,7 +142,7 @@ public class SnakePart : MonoBehaviour
         if (childScript == null )
         {
             childPart = Instantiate(partToSpawn, transform.position+currentDirection* (-1.0f-distanceFactor) * myRenderer.bounds.size.x, Quaternion.identity);
-            childScript = childPart.GetComponent<SnakeBodyController>();
+            childScript = childPart.GetComponentInChildren<SnakeBodyController>();
             childScript.front = this;
             childScript.speed = speed;
             childScript.partToSpawn = partToSpawn;

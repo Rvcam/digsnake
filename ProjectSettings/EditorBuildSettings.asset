@@ -9,6 +9,6 @@ EditorBuildSettings:
     path: Assets/Scenes/preload.unity
     guid: abdd4b823fe6f46459e55d288ed4d20b
   - enabled: 1
-    path: Assets/Scenes/BlueLab.unity
-    guid: 46685a36e74c74c48b8ce5af50268297
+    path: Assets/Scenes/1-1.unity
+    guid: d92a2ac21c4ff224b9b44fededca1591
   m_configObjects: {}

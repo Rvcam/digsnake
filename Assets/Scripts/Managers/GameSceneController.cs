@@ -24,24 +24,24 @@ public class GameSceneController : MonoBehaviour
     GameManager gameManager;
     PlayerController playerController;
 
-    public int numberOfFruits;
+    private int numberOfFruits;
     private int requiredFruits;
     private int totalCollectedFruit;
     [SerializeField]
-    private int fruitLenience;
+    private int fruitLenience = 0;
 
     [SerializeField]
     private SavePoint startingSP;
     private SavePoint lastSP;
 
     public event Action directionChanged;
-    
+
     #endregion
 
 
     private void Awake()
     {
-        if (FindObjectOfType<GameManager>()==null)
+        if (FindObjectOfType<GameManager>() == null)
         {
             SceneManager.LoadScene("preload");
         }
@@ -62,9 +62,9 @@ public class GameSceneController : MonoBehaviour
         {
             sp.arrivedAtSavePoint += stopScreen;
             sp.savePointActivated += useSavePoint;
-            if (gameManager.activeSPs.ContainsKey(sp.gameObject.name) && gameManager.activeSPs[sp.gameObject.name]==true)
+            if (gameManager.activeSPs.ContainsKey(sp.gameObject.name) && gameManager.activeSPs[sp.gameObject.name] == true)
             {
-                sp.setAsActivated();
+                sp.externalActivate();
             }
             if (sp.gameObject.name == gameManager.startingSP)
             {
@@ -76,26 +76,25 @@ public class GameSceneController : MonoBehaviour
         saveSPToGameManager(startingSP);
         roomSpeed = startingSP.futureSpeed;
         roomDirection = startingSP.futureDirection;
-        startingSP.setAsActivated();
+        startingSP.externalActivate();
 
 
-        playerController.transform.Translate(startingSP.transform.position - playerController.transform.position);
+        playerController.transform.Translate(startingSP.transform.position - playerController.transform.position + getRoomDirectionAsVector() * (startingSP.getSize().magnitude));
         Camera mainCamera = FindObjectOfType<Camera>();
         mainCamera.transform.Translate
             (
-                playerController.transform.position.x - mainCamera.transform.position.x + getRoomDirectionAsVector().x * (bounds.width / 2 - startingSP.GetComponent<SpriteRenderer>().bounds.size.x),
-                playerController.transform.position.y - mainCamera.transform.position.y + getRoomDirectionAsVector().y * (bounds.height / 2 - startingSP.GetComponent<SpriteRenderer>().bounds.size.y),
+                playerController.transform.position.x - mainCamera.transform.position.x + getRoomDirectionAsVector().x * (bounds.width / 2 - 2 * startingSP.getSize().x),
+                playerController.transform.position.y - mainCamera.transform.position.y + getRoomDirectionAsVector().y * (bounds.height / 2 - 2 * startingSP.getSize().y),
                 0
             );
         fruitManager.transform.Translate(mainCamera.transform.position - fruitManager.transform.position);
-        fruitManager.adjustSpawnArea();
         transform.Translate(mainCamera.transform.position.x - transform.position.x, mainCamera.transform.position.y - transform.position.y, 0);
 
 
-        playerController.Finished += showEndMessage;
+        //playerController.Finished += showEndMessage;
         playerController.Finished += endGame;
         playerController.FruitCollected += fruitCollected;
-        fruitManager.spawned += fruitSpawned;
+        fruitManager.Spawned += fruitSpawned;
         numberOfFruits += FindObjectsOfType<Fruit>().Length;
 
         totalCollectedFruit = 0;
@@ -109,7 +108,7 @@ public class GameSceneController : MonoBehaviour
             respawn();
         }
 
-        if (started==false && playerController.isReady())
+        if (started == false && playerController.isReady())
         {
             playerController.delayedGrowth(startingSP.getSavedLength() - 1);
             started = true;
@@ -154,20 +153,23 @@ public class GameSceneController : MonoBehaviour
         return totalCollectedFruit + fruitLenience >= requiredFruits;
     }
 
-    private void useSavePoint(SavePoint sp, bool firstActivation)
+    private void useSavePoint(SavePoint sp)
     {
-        roomDirection = sp.futureDirection;
-        roomSpeed = sp.futureSpeed;
-        foreach(Fruit fruit in FindObjectsOfType<Fruit>())
+        if (sp != lastSP)
         {
-            Destroy(fruit.gameObject);
+            roomDirection = sp.futureDirection;
+            roomSpeed = sp.futureSpeed;
+            foreach (Fruit fruit in FindObjectsOfType<Fruit>())
+            {
+                Destroy(fruit.gameObject);
+            }
+            requiredFruits = 0;
+            totalCollectedFruit = 0;
+            fruitManager.controlSpawning(true);
+            directionChanged();
+            lastSP = sp;
+            saveSPToGameManager(sp);
         }
-        requiredFruits = 0;
-        totalCollectedFruit = 0;
-        fruitManager.controlSpawning(true);
-        directionChanged();
-        lastSP = sp;
-        saveSPToGameManager(sp);
     }
 
     private void saveSPToGameManager(SavePoint sp)

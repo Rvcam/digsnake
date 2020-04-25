@@ -30,7 +30,7 @@ public class PlayerController : SnakePart
         {
             print("Speed not set");
         }
-        timeToWalkOwnSize = GetComponent<Renderer>().bounds.size.x / speed;
+        timeToWalkOwnSize = myRenderer.bounds.size.x / speed;
         timeLastDirectionChange = -timeToWalkOwnSize;
         oldDirection = currentDirection;
         gameSceneController = FindObjectOfType<GameSceneController>();
@@ -39,7 +39,6 @@ public class PlayerController : SnakePart
 
     protected void directionalInput()
     {
-
         Vector3 newDirection = oldDirection;
         if (Input.GetKeyDown("right"))
         {
@@ -91,23 +90,29 @@ public class PlayerController : SnakePart
 
     protected void Update()
     {
-        directionalInput();
-        if ((snakeLength - initialSize) > oldSizeDiff + 5)
+        if (!gameSceneController.gameOver)
         {
-            changeSnakeSpeed(speed + 0.5f);
-            oldSizeDiff = snakeLength - initialSize;
-            timeToWalkOwnSize = myRenderer.bounds.size.x / speed;
-        }
+            directionalInput();
+            if ((snakeLength - initialSize) > oldSizeDiff + 5)
+            {
+                changeSnakeSpeed(speed + 0.5f);
+                oldSizeDiff = snakeLength - initialSize;
+                timeToWalkOwnSize = myRenderer.bounds.size.x / speed;
+            }
 
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            teleporting = true;
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                teleporting = true;
+            }
+            if (isReady())
+            {
+                transform.right = currentDirection;
+            }
+            else
+            {
+                transform.right = gameSceneController.getRoomDirectionAsVector();
+            }
         }
-        if (gameSceneController.numberOfFruits <= 0 && gameSceneController.gameOver==false)
-        {
-            //win();
-        }
-        transform.right = currentDirection;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -141,6 +146,7 @@ public class PlayerController : SnakePart
         }
         Finished(false);
         myRenderer.color = new Color(1, 1, 1, 0);
+        myLight.intensity = 0;
     }
 
     private void win()
