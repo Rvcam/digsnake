@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1252811280344699942}
   - component: {fileID: 1252811280344699941}
   - component: {fileID: 1252811280344699936}
+  - component: {fileID: 663509472}
   m_Layer: 0
   m_Name: gameSceneController
   m_TagString: Untagged
@@ -47,8 +48,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   roomSpeed: 1
   roomDirection: 3
-  numberOfFruits: 0
-  fruitLenience: 3
+  fruitLenience: 2
   startingSP: {fileID: 0}
 --- !u!61 &1252811280344699941
 BoxCollider2D:
@@ -90,3 +90,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   editorTags:
   - outer screen bounds
+--- !u!50 &663509472
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1252811280344699940}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 1
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0

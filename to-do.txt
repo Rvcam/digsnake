@@ -1,0 +1,24 @@
+
+PRA LANÇAR
+transição de níveis
+velocidade inicial
+
+
+FEATURES
+base pra deixar algumas pessoas
+aura anti-fruta
+interações entre o próprio cenário
+mais meteoros
+
+CORREÇÕES
+usar enum na direção de snake head
+botar planetas nos portais de nível
+tirar gambiarra do "level portal"
+camera antes do save point ao renascer
+mudar direção inicial de jogador
+
+CONSIDERAÇÕES
+chato não pegar todas as frutas
+como recompensar mais exploração
+power-ups
+keep it simple!

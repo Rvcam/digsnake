@@ -19,12 +19,10 @@ public class SavePoint : MonoBehaviour
 
     private GameSceneController gameSceneController;
 
-    [SerializeField]
-    private Transform cameraTransform=null;
     private Vector3 targetPosition;
 
     [SerializeField]
-    private float errorMargin=10f;
+    private float errorMargin=1.0f;
 
     [Range(0f, 4f)]
     public float futureSpeed;
@@ -60,6 +58,7 @@ public class SavePoint : MonoBehaviour
             Debug.LogError("erro margin for save point not set");
         }
         gameSceneController = FindObjectOfType<GameSceneController>();
+        Transform cameraTransform = FindObjectOfType<Camera>().gameObject.transform;
         targetPosition = cameraTransform.position; // it will be adjusted later at adjustTarget
         targetPosition.z = transform.position.z;
 

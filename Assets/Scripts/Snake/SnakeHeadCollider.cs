@@ -27,4 +27,27 @@ public class SnakeHeadCollider : MonoBehaviour
             }
         }
     }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        Tagger tagger = collision.gameObject.GetComponent<Tagger>();
+        if (tagger)
+        {
+            if (gameSceneController.gameOver == false)
+            {
+                if (tagger.containsCustomTag("obstacle"))
+                {
+                    head.onChildObstacleHit();
+                }
+                else if (tagger.containsCustomTag("teleporter"))
+                {
+                    head.teleport();
+                }
+                else if (tagger.containsCustomTag("accelerator"))
+                {
+                    head.accelerate();
+                }
+            }
+        }
+    }
 }

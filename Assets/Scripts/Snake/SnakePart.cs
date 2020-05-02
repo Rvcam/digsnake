@@ -47,7 +47,7 @@ public class SnakePart : MonoBehaviour
         }
         else
         {
-            if (front.positionsAfterTurn.Count >0)// ((1.0f + distanceFactor) * myRenderer.bounds.size.x) / (Time.fixedDeltaTime * speed))
+            if (front.positionsAfterTurn.Count > 0)// ((1.0f + distanceFactor) * myRenderer.bounds.size.x) / (Time.fixedDeltaTime * speed))
             {
                 myRigidbody.MovePosition(front.positionsAfterTurn.Peek());
             }
@@ -103,21 +103,25 @@ public class SnakePart : MonoBehaviour
 
         if (front != null)
         {
-            if (((snakeLength-2)/3) % 2 == 1)
+            if (((snakeLength-2)/2) % 3 == 1)
             {
                 foreach (Light2D light in GetComponentsInChildren<Light2D>())
                 {
-                    if (light.gameObject.name != "Core Light")
-                    {
-                        if (light.color.b < 0.1f)
-                        {
-                            light.color = new Color(0f, 0.7333f, 1.0f);
-                        }
-                        else if (light.color.r < 0.1f)
-                        {
-                            light.color = new Color(1.0f, 0.2666f, 0f);
-                        }
-                    }
+                    light.color = Color.HSVToRGB(316f/360, 0.8f, 1);
+                }
+            }
+            else if (((snakeLength - 2) / 2) % 3 == 2)
+            {
+                foreach (Light2D light in GetComponentsInChildren<Light2D>())
+                {
+                    light.color = Color.HSVToRGB(76f/360, 0.8f, 1);
+                }
+            }
+            else
+            {
+                foreach (Light2D light in GetComponentsInChildren<Light2D>())
+                {
+                    light.color = Color.HSVToRGB(196f / 360, 0.8f, 1);
                 }
             }
         }
@@ -150,7 +154,7 @@ public class SnakePart : MonoBehaviour
             childScript.distanceFactor = distanceFactor;
             childScript.snakeLength = snakeLength;
         }
-        else if (childScript!=null) //just in case the child object gets destroyed prior to this call
+        else if (!gameSceneController.gameOver && childScript!=null) //just in case the child object gets destroyed prior to this call
         {
             childScript.growParts();
         }

@@ -31,9 +31,12 @@ public class FruitManager : MonoBehaviour
         verticalSpawnWidth = GetComponents<BoxCollider2D>()[1].bounds.size.x;
         verticalSpawnHeight = GetComponents<BoxCollider2D>()[1].bounds.size.y;
 
-        adjustSpawnArea();
         controlSpawning(true);
-        gameSceneController.directionChanged += adjustSpawnArea;
+    }
+
+    private void Update()
+    {
+        adjustSpawnArea();
     }
 
     private IEnumerator spawnRandomFruit()

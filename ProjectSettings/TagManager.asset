@@ -44,6 +44,12 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: level portal layer 1
+    uniqueID: 4228827819
+    locked: 0
+  - name: level portal layer 2
+    uniqueID: 3293397587
+    locked: 0
   - name: player layer 1
     uniqueID: 1134638675
     locked: 0
@@ -59,14 +65,20 @@ TagManager:
   - name: fruits
     uniqueID: 3092167815
     locked: 0
-  - name: save point triangles
+  - name: save point layer 1
+    uniqueID: 3039223253
+    locked: 0
+  - name: save point layer 2
     uniqueID: 2448106227
     locked: 0
-  - name: obstacle alternate universes
+  - name: obstacle layer 1
     uniqueID: 3750680827
     locked: 0
-  - name: obstacle aura
+  - name: obstacle layer 2
     uniqueID: 2014181335
+    locked: 0
+  - name: obstacle layer 3
+    uniqueID: 50654767
     locked: 0
   - name: pitch black
     uniqueID: 628326495

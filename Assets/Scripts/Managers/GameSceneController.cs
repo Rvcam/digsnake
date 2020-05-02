@@ -33,8 +33,7 @@ public class GameSceneController : MonoBehaviour
     [SerializeField]
     private SavePoint startingSP;
     private SavePoint lastSP;
-
-    public event Action directionChanged;
+    public bool teleGambi;
 
     #endregion
 
@@ -49,7 +48,6 @@ public class GameSceneController : MonoBehaviour
         float width = GetComponent<BoxCollider2D>().bounds.size.x;
         float height = GetComponent<BoxCollider2D>().bounds.size.y;
         bounds = new Rect(transform.position.x - width / 2, transform.position.y - height / 2, width, height);
-        roomSpeed = 0;
     }
 
     private void Start()
@@ -74,10 +72,10 @@ public class GameSceneController : MonoBehaviour
         }
         lastSP = startingSP;
         saveSPToGameManager(startingSP);
-        roomSpeed = startingSP.futureSpeed;
-        roomDirection = startingSP.futureDirection;
         startingSP.externalActivate();
 
+        roomSpeed = startingSP.futureSpeed;
+        roomDirection = startingSP.futureDirection;
 
         playerController.transform.Translate(startingSP.transform.position - playerController.transform.position + getRoomDirectionAsVector() * (startingSP.getSize().magnitude));
         Camera mainCamera = FindObjectOfType<Camera>();
@@ -91,7 +89,10 @@ public class GameSceneController : MonoBehaviour
         transform.Translate(mainCamera.transform.position.x - transform.position.x, mainCamera.transform.position.y - transform.position.y, 0);
 
 
-        //playerController.Finished += showEndMessage;
+        foreach (LevelPortal portal in FindObjectsOfType<LevelPortal>())
+        {
+            portal.win += nextLevel;
+        }
         playerController.Finished += endGame;
         playerController.FruitCollected += fruitCollected;
         fruitManager.Spawned += fruitSpawned;
@@ -100,6 +101,7 @@ public class GameSceneController : MonoBehaviour
         totalCollectedFruit = 0;
         requiredFruits = numberOfFruits;
     }
+
 
     private void Update()
     {
@@ -155,8 +157,8 @@ public class GameSceneController : MonoBehaviour
 
     private void useSavePoint(SavePoint sp)
     {
-        if (sp != lastSP)
-        {
+        if ( ! (gameManager.activeSPs.ContainsKey(sp.gameObject.name) && gameManager.activeSPs[sp.gameObject.name] == true)) //we have encountered this save point for the first time
+        {// pay attention to the negation on the if condition (!)
             roomDirection = sp.futureDirection;
             roomSpeed = sp.futureSpeed;
             foreach (Fruit fruit in FindObjectsOfType<Fruit>())
@@ -166,7 +168,6 @@ public class GameSceneController : MonoBehaviour
             requiredFruits = 0;
             totalCollectedFruit = 0;
             fruitManager.controlSpawning(true);
-            directionChanged();
             lastSP = sp;
             saveSPToGameManager(sp);
         }
@@ -213,20 +214,8 @@ public class GameSceneController : MonoBehaviour
         _gameOver = true;
     }
 
-    private void showEndMessage(bool won)
+    private void nextLevel(string nextLevelName)
     {
-        if (won)
-        {
-            FindObjectOfType<Text>().GetComponent<Text>().text = "You are Winner !!!";
-            FindObjectOfType<Text>().GetComponent<Text>().color = Color.green;
-            FindObjectOfType<Text>().GetComponent<Text>().fontSize = 54;
-        }        
-        else
-        {
-            FindObjectOfType<Text>().GetComponent<Text>().text = "try again? (ENTER)";
-            FindObjectOfType<Text>().GetComponent<Text>().color = Color.red;
-        }
+        gameManager.transition(nextLevelName);
     }
-
-    
 }

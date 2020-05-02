@@ -17,10 +17,13 @@ public class PlayerController : SnakePart
     private bool teleporting;
     [SerializeField]
     [Range(0.3f, 3.0f)]
-    private float teleportingDistance=3;
+    private float teleportingDistance = 3;
 
     public event Action<bool> Finished;
     public event Action FruitCollected;
+
+    private bool isAccelerating;
+    private float accelSpeedIncreased;
 
     #endregion
     protected override void Start()
@@ -35,6 +38,8 @@ public class PlayerController : SnakePart
         oldDirection = currentDirection;
         gameSceneController = FindObjectOfType<GameSceneController>();
         snakeLength++;
+        isAccelerating = false;
+        accelSpeedIncreased = 0;
     }
 
     protected void directionalInput()
@@ -99,11 +104,6 @@ public class PlayerController : SnakePart
                 oldSizeDiff = snakeLength - initialSize;
                 timeToWalkOwnSize = myRenderer.bounds.size.x / speed;
             }
-
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                teleporting = true;
-            }
             if (isReady())
             {
                 transform.right = currentDirection;
@@ -111,6 +111,12 @@ public class PlayerController : SnakePart
             else
             {
                 transform.right = gameSceneController.getRoomDirectionAsVector();
+            }
+
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                //accelerate();
+                teleport();
             }
         }
     }
@@ -180,5 +186,33 @@ public class PlayerController : SnakePart
     public bool isReady()
     {
         return currentDirection.magnitude > Mathf.Epsilon && speed > Mathf.Epsilon;
+    }
+
+    public void accelerate()
+    {
+        
+        if (!isAccelerating)
+        {
+            float originalSpeed = speed;
+            float newSpeed = speed * 2f;
+            changeSnakeSpeed(newSpeed);
+            isAccelerating = true;
+            accelSpeedIncreased = newSpeed - originalSpeed;
+            StartCoroutine(undoAccelerate(2));
+        }
+        
+    }
+
+    private IEnumerator undoAccelerate(float time)
+    {
+        yield return new WaitForSeconds(time);
+        changeSnakeSpeed(speed - accelSpeedIncreased);
+        isAccelerating = false;
+    }
+
+    public void teleport()
+    {
+        if (gameSceneController.teleGambi==true)
+        teleporting = true;
     }
 }
