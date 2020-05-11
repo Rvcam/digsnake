@@ -23,7 +23,7 @@ public class PlayerController : SnakePart
     public event Action FruitCollected;
 
     private bool isAccelerating;
-    private float accelSpeedIncreased;
+    private float speedChangedBy;
 
     #endregion
     protected override void Start()
@@ -39,7 +39,7 @@ public class PlayerController : SnakePart
         gameSceneController = FindObjectOfType<GameSceneController>();
         snakeLength++;
         isAccelerating = false;
-        accelSpeedIncreased = 0;
+        speedChangedBy = 0;
     }
 
     protected void directionalInput()
@@ -115,13 +115,13 @@ public class PlayerController : SnakePart
 
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                //accelerate();
-                teleport();
+                accelerate(3);
+                //teleport();
             }
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
         Tagger tagger = collision.gameObject.GetComponent<Tagger>();
         if (tagger)
@@ -188,17 +188,17 @@ public class PlayerController : SnakePart
         return currentDirection.magnitude > Mathf.Epsilon && speed > Mathf.Epsilon;
     }
 
-    public void accelerate()
+    public void accelerate(float rate)
     {
         
         if (!isAccelerating)
         {
             float originalSpeed = speed;
-            float newSpeed = speed * 2f;
+            float newSpeed = speed * rate;
             changeSnakeSpeed(newSpeed);
             isAccelerating = true;
-            accelSpeedIncreased = newSpeed - originalSpeed;
-            StartCoroutine(undoAccelerate(2));
+            speedChangedBy = newSpeed - originalSpeed;
+            StartCoroutine(undoAccelerate(1));
         }
         
     }
@@ -206,13 +206,12 @@ public class PlayerController : SnakePart
     private IEnumerator undoAccelerate(float time)
     {
         yield return new WaitForSeconds(time);
-        changeSnakeSpeed(speed - accelSpeedIncreased);
+        changeSnakeSpeed(speed - speedChangedBy);
         isAccelerating = false;
     }
 
     public void teleport()
     {
-        if (gameSceneController.teleGambi==true)
         teleporting = true;
     }
 }

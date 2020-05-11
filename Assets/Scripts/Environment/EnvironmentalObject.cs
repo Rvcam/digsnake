@@ -15,14 +15,15 @@ public class EnvironmentalObject : MonoBehaviour
     private void Start()
     {
         gameSceneController = FindObjectOfType<GameSceneController>();
-        if (aditionalSpeedEnabled)
-        {
-            originalDirection = gameSceneController.getRoomDirectionAsVector();
-        }
+        originalDirection = Vector3.zero;
     }
 
     private void Update()
     {
+        if (originalDirection==Vector3.zero && aditionalSpeedEnabled)
+        {
+            originalDirection = gameSceneController.getRoomDirectionAsVector();
+        }
         Vector3 translateBy = -1 * gameSceneController.roomSpeed * gameSceneController.getRoomDirectionAsVector() * Time.deltaTime;
         if (aditionalSpeedEnabled)
         {

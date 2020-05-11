@@ -45,7 +45,11 @@ public class SnakeHeadCollider : MonoBehaviour
                 }
                 else if (tagger.containsCustomTag("accelerator"))
                 {
-                    head.accelerate();
+                    head.accelerate(2);
+                }
+                else if (tagger.containsCustomTag("decelerator"))
+                {
+                    head.accelerate(0.5f);
                 }
             }
         }

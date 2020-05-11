@@ -1,8 +1,7 @@
-﻿using System;
+﻿using MyUtil;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using MyUtil;
-using System.Collections;
 using UnityEngine.Experimental.Rendering.Universal;
 
 [RequireComponent(typeof(Tagger))]
@@ -47,26 +46,29 @@ public class SnakePart : MonoBehaviour
         }
         else
         {
-            if (front.positionsAfterTurn.Count > 0)// ((1.0f + distanceFactor) * myRenderer.bounds.size.x) / (Time.fixedDeltaTime * speed))
+
+            if (front.positionsAfterTurn.Count > 0)
             {
-                myRigidbody.MovePosition(front.positionsAfterTurn.Peek());
+                Vector3 frontPeekPosition = front.positionsAfterTurn.Peek();
+                float frontDistance = Mathf.Abs(frontPeekPosition.y - front.transform.position.y) + Mathf.Abs(frontPeekPosition.x - front.transform.position.x);
+                Vector3 newPos=transform.position;
+                while(front.positionsAfterTurn.Count>0 && frontDistance > (1.0f + distanceFactor) * myRenderer.bounds.size.x)
+                {
+                    newPos = front.positionsAfterTurn.Dequeue();
+                    frontPeekPosition = front.positionsAfterTurn.Peek();
+                    frontDistance = Mathf.Abs(frontPeekPosition.y - front.transform.position.y) + Mathf.Abs(frontPeekPosition.x - front.transform.position.x);
+                }
+                myRigidbody.MovePosition(newPos);
             }
             else
             {
-                //fica parado, implementar depois
+                //stay still
             }
         }
 
-        while (positionsAfterTurn.Count > ((1.0f + distanceFactor) * myRenderer.bounds.size.x) / (Time.fixedDeltaTime * speed))
-        {
-            //we have moved too far and our trail is too long
-            positionsAfterTurn.Dequeue();
-        }
-
-        positionsAfterTurn.Enqueue(transform.position);
-
         if (childScript)
         {
+            positionsAfterTurn.Enqueue(transform.position);
             childScript.recursiveMovement();
         }
     }
@@ -137,6 +139,12 @@ public class SnakePart : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        //print(((1.0f + distanceFactor) * myRenderer.bounds.size.x) / (Time.fixedDeltaTime * speed));
+        //print(((1.0f + distanceFactor) * myRenderer.bounds.size.x));
+    }
+
     #endregion
 
     #region other recursive methods
@@ -145,7 +153,14 @@ public class SnakePart : MonoBehaviour
         snakeLength++;
         if (childScript == null )
         {
-            childPart = Instantiate(partToSpawn, transform.position+currentDirection* (-1.0f-distanceFactor) * myRenderer.bounds.size.x, Quaternion.identity);
+            if (front == null)
+            {
+                childPart = Instantiate(partToSpawn, transform.position + currentDirection * (-1.0f - distanceFactor) * myRenderer.bounds.size.x, Quaternion.identity);
+            }
+            else
+            {
+                childPart = Instantiate(partToSpawn, transform.position + currentDirection * (- distanceFactor) * myRenderer.bounds.size.x, Quaternion.identity);
+            }
             childScript = childPart.GetComponentInChildren<SnakeBodyController>();
             childScript.front = this;
             childScript.speed = speed;
@@ -187,7 +202,7 @@ public class SnakePart : MonoBehaviour
         for (int i = numberToGrow; i > 0; i--)
         {
             growParts();
-            yield return new WaitForSeconds(((1.0f+distanceFactor) * myRenderer.bounds.size.x) / speed); //to give the part time to grow a trail
+            yield return new WaitForSeconds(0.2f); //to give the part time to grow a trail
         }
     }
 

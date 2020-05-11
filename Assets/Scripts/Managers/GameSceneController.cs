@@ -23,17 +23,18 @@ public class GameSceneController : MonoBehaviour
     FruitManager fruitManager;
     GameManager gameManager;
     PlayerController playerController;
+    private LostFruitsUI lostFruitsIndicator;
 
     private int numberOfFruits;
     private int requiredFruits;
     private int totalCollectedFruit;
     [SerializeField]
     private int fruitLenience = 0;
+    private int fruitLost;
 
     [SerializeField]
     private SavePoint startingSP;
     private SavePoint lastSP;
-    public bool teleGambi;
 
     #endregion
 
@@ -55,6 +56,7 @@ public class GameSceneController : MonoBehaviour
         fruitManager = FindObjectOfType<FruitManager>();
         playerController = FindObjectOfType<PlayerController>();
         gameManager = FindObjectOfType<GameManager>();
+        lostFruitsIndicator = FindObjectOfType<LostFruitsUI>();
 
         foreach (SavePoint sp in FindObjectsOfType<SavePoint>())
         {
@@ -98,10 +100,23 @@ public class GameSceneController : MonoBehaviour
         fruitManager.Spawned += fruitSpawned;
         numberOfFruits += FindObjectsOfType<Fruit>().Length;
 
+        fruitLost = 0;
         totalCollectedFruit = 0;
         requiredFruits = numberOfFruits;
     }
 
+    public void DealWithFruitLoss()
+    {
+        fruitLost++;
+        if (fruitLost <= fruitLenience)
+        {
+            lostFruitsIndicator.indicateLoss();
+        }
+        else
+        {
+            //restart level
+        }
+    }
 
     private void Update()
     {

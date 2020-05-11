@@ -422,7 +422,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f55a58928d9f7184aaae8d647990eaea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  editorTags: []
+  editorTags:
+  - anti fruit aura
 --- !u!114 &8339911375967656016
 MonoBehaviour:
   m_ObjectHideFlags: 0

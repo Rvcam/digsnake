@@ -30,6 +30,7 @@ public class GameManager : MonoBehaviour
     private void resetLevelData()
     {
         startingLength = 1;
+        startingSP = null;
         activeSPs.Clear();
         
     }

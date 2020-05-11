@@ -212,7 +212,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -544286469
-  m_SortingLayer: 8
+  m_SortingLayer: 10
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 71229dbfa62a68042983b658ca0b31d0, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -404,6 +404,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   editorTags:
   - accelerator
+  - anti fruit aura
 --- !u!114 &2019134833
 MonoBehaviour:
   m_ObjectHideFlags: 0

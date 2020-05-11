@@ -1,16 +1,12 @@
-
-PRA LANÇAR
-transição de níveis
-velocidade inicial
-
-
 FEATURES
 base pra deixar algumas pessoas
 aura anti-fruta
 interações entre o próprio cenário
 mais meteoros
+níveis de dificuldade
 
 CORREÇÕES
+ir pra parte errada do nível seguinte
 usar enum na direção de snake head
 botar planetas nos portais de nível
 tirar gambiarra do "level portal"

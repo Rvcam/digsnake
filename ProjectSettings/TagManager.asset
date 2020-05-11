@@ -38,8 +38,11 @@ TagManager:
   - 
   - 
   m_SortingLayers:
-  - name: Background
+  - name: background layer 1
     uniqueID: 3462664641
+    locked: 0
+  - name: background layer 2
+    uniqueID: 1438492191
     locked: 0
   - name: Default
     uniqueID: 0
@@ -82,4 +85,7 @@ TagManager:
     locked: 0
   - name: pitch black
     uniqueID: 628326495
+    locked: 0
+  - name: UI
+    uniqueID: 3970381049
     locked: 0

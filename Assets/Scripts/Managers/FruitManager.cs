@@ -54,7 +54,7 @@ public class FruitManager : MonoBehaviour
             for (accumulator=0; accumulator<colliders.Length; accumulator++)
             {
                 Tagger colTagger = colliders[accumulator].gameObject.GetComponent<Tagger>();
-                if (colTagger!=null && colTagger.containsCustomTag("obstacle"))
+                if (colTagger!=null && (colTagger.containsCustomTag("obstacle") || colTagger.containsCustomTag("anti fruit aura")))
                 {
                     break;
                 }
@@ -62,10 +62,16 @@ public class FruitManager : MonoBehaviour
 
             if (accumulator==colliders.Length)
             {
-                Instantiate(fruit, randomPosition, Quaternion.identity);
+                GameObject fruitObject = Instantiate(fruit, randomPosition, Quaternion.identity);
+                fruitObject.GetComponent<Fruit>().exitedScreen += lostFruit;
                 Spawned();
             }
         }
+    }
+
+    private void lostFruit()
+    {
+        gameSceneController.DealWithFruitLoss();
     }
 
     public void controlSpawning(bool shouldSpawn)
