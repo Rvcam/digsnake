@@ -86,6 +86,9 @@ TagManager:
   - name: pitch black
     uniqueID: 628326495
     locked: 0
-  - name: UI
+  - name: UI layer 1
     uniqueID: 3970381049
+    locked: 0
+  - name: UI layer 2
+    uniqueID: 345914201
     locked: 0

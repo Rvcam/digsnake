@@ -14,6 +14,7 @@ public class PlayerController : SnakePart
     private int initialSize = 0;
     Vector3 oldDirection;
     private int oldSizeDiff;
+    private bool directionSet=false;
     private bool teleporting;
     [SerializeField]
     [Range(0.3f, 3.0f)]
@@ -32,10 +33,7 @@ public class PlayerController : SnakePart
         if (speed < Mathf.Epsilon)
         {
             print("Speed not set");
-        }
-        timeToWalkOwnSize = myRenderer.bounds.size.x / speed;
-        timeLastDirectionChange = -timeToWalkOwnSize;
-        oldDirection = currentDirection;
+        }        
         gameSceneController = FindObjectOfType<GameSceneController>();
         snakeLength++;
         isAccelerating = false;
@@ -65,6 +63,7 @@ public class PlayerController : SnakePart
             newDirection = new Vector3(0, -1, 0);
         }
 
+        timeToWalkOwnSize = myRenderer.bounds.size.x / speed;
         if (Time.time - timeLastDirectionChange > timeToWalkOwnSize)
         {
             if (newDirection != currentDirection && newDirection != currentDirection * -1.0f)
@@ -97,12 +96,18 @@ public class PlayerController : SnakePart
     {
         if (!gameSceneController.gameOver)
         {
+            if (!directionSet)
+            {
+                timeLastDirectionChange = Time.time;
+                currentDirection = gameSceneController.getRoomDirectionAsVector(); // vector is used here because of enum. Update that someday
+                oldDirection = currentDirection;
+                directionSet = true;
+            }
             directionalInput();
             if ((snakeLength - initialSize) > oldSizeDiff + 5)
             {
                 changeSnakeSpeed(speed + 0.5f);
                 oldSizeDiff = snakeLength - initialSize;
-                timeToWalkOwnSize = myRenderer.bounds.size.x / speed;
             }
             if (isReady())
             {
@@ -116,6 +121,9 @@ public class PlayerController : SnakePart
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 accelerate(3);
+            }
+            else if (Input.GetKeyDown(KeyCode.X))
+            {
                 //teleport();
             }
         }

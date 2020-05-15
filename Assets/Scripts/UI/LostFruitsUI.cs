@@ -5,9 +5,10 @@ using UnityEngine;
 public class LostFruitsUI : MonoBehaviour
 {
     [SerializeField]
-    private GameObject[] fruitIndicators=null;
+    private FruitIndicator[] fruitIndicators = null;
     private int indicatorsQuantity;
-    private void Start()
+
+    private void Awake()
     {
         indicatorsQuantity = fruitIndicators.Length;
     }
@@ -15,9 +16,29 @@ public class LostFruitsUI : MonoBehaviour
     public void indicateLoss()
     {
         if (indicatorsQuantity - 1 >= 0)
-        {   
-            fruitIndicators[indicatorsQuantity - 1].SetActive(false);
+        {
+            fruitIndicators[indicatorsQuantity - 1].disappear();
         }
         indicatorsQuantity--;
     }
+
+    public void indicateNotEnoughFruit()
+    {
+        GetComponentInChildren<NotEnoughIndicator>().warn();
+    }
+
+    public int getQuantity()
+    {
+        return indicatorsQuantity;
+    }
+
+    public void reset()
+    {
+        indicatorsQuantity = fruitIndicators.Length;
+        for (int i = 0; i < fruitIndicators.Length; i++)
+        {
+            fruitIndicators[i].reset();
+        }
+    }
+
 }

@@ -23,13 +23,12 @@ public class GameSceneController : MonoBehaviour
     FruitManager fruitManager;
     GameManager gameManager;
     PlayerController playerController;
-    private LostFruitsUI lostFruitsIndicator;
+    private LostFruitsUI lostFruitsUI;
 
     private int numberOfFruits;
     private int requiredFruits;
     private int totalCollectedFruit;
-    [SerializeField]
-    private int fruitLenience = 0;
+    private int fruitLenience;
     private int fruitLost;
 
     [SerializeField]
@@ -56,7 +55,9 @@ public class GameSceneController : MonoBehaviour
         fruitManager = FindObjectOfType<FruitManager>();
         playerController = FindObjectOfType<PlayerController>();
         gameManager = FindObjectOfType<GameManager>();
-        lostFruitsIndicator = FindObjectOfType<LostFruitsUI>();
+        lostFruitsUI = FindObjectOfType<LostFruitsUI>();
+
+        fruitLenience = lostFruitsUI.getQuantity();
 
         foreach (SavePoint sp in FindObjectsOfType<SavePoint>())
         {
@@ -110,11 +111,12 @@ public class GameSceneController : MonoBehaviour
         fruitLost++;
         if (fruitLost <= fruitLenience)
         {
-            lostFruitsIndicator.indicateLoss();
+            lostFruitsUI.indicateLoss();
         }
         else
         {
-            //restart level
+            lostFruitsUI.indicateNotEnoughFruit();
+            Invoke("respawn", 1.6f);
         }
     }
 
@@ -167,11 +169,12 @@ public class GameSceneController : MonoBehaviour
 
     public bool isCollectingWell()
     {
-        return totalCollectedFruit + fruitLenience >= requiredFruits;
+        return totalCollectedFruit + fruitLenience >= requiredFruits && FindObjectsOfType<Fruit>().Length==0;
     }
 
     private void useSavePoint(SavePoint sp)
     {
+        lostFruitsUI.reset();
         if ( ! (gameManager.activeSPs.ContainsKey(sp.gameObject.name) && gameManager.activeSPs[sp.gameObject.name] == true)) //we have encountered this save point for the first time
         {// pay attention to the negation on the if condition (!)
             roomDirection = sp.futureDirection;

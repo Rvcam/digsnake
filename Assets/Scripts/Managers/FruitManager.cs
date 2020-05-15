@@ -53,7 +53,7 @@ public class FruitManager : MonoBehaviour
             Collider2D[] colliders = Physics2D.OverlapBoxAll(randomPosition, fruitExtents, 0);
             for (accumulator=0; accumulator<colliders.Length; accumulator++)
             {
-                Tagger colTagger = colliders[accumulator].gameObject.GetComponent<Tagger>();
+                Tagger colTagger = colliders[accumulator].gameObject.GetComponentInParent<Tagger>();
                 if (colTagger!=null && (colTagger.containsCustomTag("obstacle") || colTagger.containsCustomTag("anti fruit aura")))
                 {
                     break;
@@ -122,7 +122,7 @@ public class FruitManager : MonoBehaviour
                     break;
 
                 case Directions.Down:
-                    bounds = new Rect(transform.position.x - verticalSpawnWidth / 2, transform.position.y - horizontalSpawnHeight, verticalSpawnWidth, verticalSpawnHeight);
+                    bounds = new Rect(transform.position.x - verticalSpawnWidth / 2, transform.position.y - verticalSpawnHeight, verticalSpawnWidth, verticalSpawnHeight);
                     break;
             }
         }

@@ -1,20 +1,20 @@
 FEATURES
-base pra deixar algumas pessoas
-aura anti-fruta
-interações entre o próprio cenário
+base pra deixar algumas pessoas e diminuir o tamanho da cobra
+interações entre o próprio cenário (colisões de meteros, et.)
 mais meteoros
 níveis de dificuldade
+indicador de aparição e desparecimento de frutinha (círculo verde fazendo onda como radar)
+fazer aura anti fruta perto do planeta
 
 CORREÇÕES
-ir pra parte errada do nível seguinte
 usar enum na direção de snake head
-botar planetas nos portais de nível
-tirar gambiarra do "level portal"
-camera antes do save point ao renascer
-mudar direção inicial de jogador
+composição do background da tela do botão "play"
+posição da camera quando respawna no save point
+algumas vezes o audio toca antes doq ue deveria, na tela do "play"
+n deixar a pessoa passar de nível se morrer
 
 CONSIDERAÇÕES
 chato não pegar todas as frutas
 como recompensar mais exploração
 power-ups
-keep it simple!
+keep it simple!'
