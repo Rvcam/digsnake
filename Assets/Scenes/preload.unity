@@ -165,7 +165,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a943c711a9da30c48a2b08bf395ab502, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  firstScene: 1-3
+  firstScene: initial
   startingSP: 
   startingLength: 0
 --- !u!82 &1358904621

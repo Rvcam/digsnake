@@ -24,7 +24,11 @@ public class LostFruitsUI : MonoBehaviour
 
     public void indicateNotEnoughFruit()
     {
-        GetComponentInChildren<NotEnoughIndicator>().warn();
+        NotEnoughIndicator indicator = GetComponentInChildren<NotEnoughIndicator>();
+        if (indicator!=null)
+        {
+            indicator.warn();
+        }
     }
 
     public int getQuantity()

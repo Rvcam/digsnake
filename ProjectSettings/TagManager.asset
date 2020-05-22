@@ -62,12 +62,6 @@ TagManager:
   - name: player layer 3
     uniqueID: 1848785829
     locked: 0
-  - name: lightless
-    uniqueID: 1851695881
-    locked: 0
-  - name: fruits
-    uniqueID: 3092167815
-    locked: 0
   - name: save point layer 1
     uniqueID: 3039223253
     locked: 0
@@ -82,6 +76,12 @@ TagManager:
     locked: 0
   - name: obstacle layer 3
     uniqueID: 50654767
+    locked: 0
+  - name: lightless
+    uniqueID: 1851695881
+    locked: 0
+  - name: fruits
+    uniqueID: 3092167815
     locked: 0
   - name: pitch black
     uniqueID: 628326495

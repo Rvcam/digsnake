@@ -6,7 +6,6 @@ using UnityEngine.SceneManagement;
 public class PlayButton : MonoBehaviour
 {
     public string nextLevel;
-    private float startTime=0;
     private void Awake()
     {
         if (FindObjectOfType<GameManager>() == null)
@@ -18,7 +17,6 @@ public class PlayButton : MonoBehaviour
     private void Start()
     {
         FindObjectOfType<GameManager>().GetComponent<AudioSource>().Stop();
-        startTime = Time.time;
     }
 
     public void Update()
