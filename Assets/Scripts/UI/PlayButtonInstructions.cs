@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class PlayButton : MonoBehaviour
+public class PlayButtonInstructions : MonoBehaviour
 {
     public string nextLevel;
     private void Awake()
@@ -12,16 +12,15 @@ public class PlayButton : MonoBehaviour
         {
             SceneManager.LoadScene(nextLevel);
         }
-    }
-
-    private void Start()
-    {
-        FindObjectOfType<GameManager>().GetComponent<AudioSource>().Stop();
+        else
+        {
+            FindObjectOfType<GameManager>().GetComponent<AudioSource>().Stop();
+        }
     }
 
     public void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space)) 
+        if (Input.GetKeyDown(KeyCode.Space) )
         {
             FindObjectOfType<GameManager>().GetComponent<AudioSource>().Play();
             SceneManager.LoadScene(nextLevel);

@@ -5,6 +5,8 @@ using MyUtil;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System;
+using System.Dynamic;
+using TMPro;
 
 public class GameSceneController : MonoBehaviour
 {
@@ -24,6 +26,7 @@ public class GameSceneController : MonoBehaviour
     GameManager gameManager;
     PlayerController playerController;
     private LostFruitsUI lostFruitsUI;
+    private LevelTransitionUI levelTransitionUI;
 
     private int numberOfFruits;
     private int requiredFruits;
@@ -35,9 +38,11 @@ public class GameSceneController : MonoBehaviour
     private SavePoint startingSP;
     private SavePoint lastSP;
 
+    public TextMeshPro fruitCollectedNumberIndicator=null;
+
     #endregion
 
-
+    #region monobehaviour methods
     private void Awake()
     {
         if (FindObjectOfType<GameManager>() == null)
@@ -56,6 +61,7 @@ public class GameSceneController : MonoBehaviour
         playerController = FindObjectOfType<PlayerController>();
         gameManager = FindObjectOfType<GameManager>();
         lostFruitsUI = FindObjectOfType<LostFruitsUI>();
+        levelTransitionUI = FindObjectOfType<LevelTransitionUI>();
 
         fruitLenience = lostFruitsUI.getQuantity();
 
@@ -106,20 +112,6 @@ public class GameSceneController : MonoBehaviour
         requiredFruits = numberOfFruits;
     }
 
-    public void DealWithFruitLoss()
-    {
-        fruitLost++;
-        if (fruitLost <= fruitLenience)
-        {
-            lostFruitsUI.indicateLoss();
-        }
-        else
-        {
-            lostFruitsUI.indicateNotEnoughFruit();
-            Invoke("respawn", 1.6f);
-        }
-    }
-
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Return))
@@ -133,6 +125,10 @@ public class GameSceneController : MonoBehaviour
             started = true;
         }
     }
+
+    #endregion
+
+    #region room space and movement
 
     public Rect getBounds()
     {
@@ -155,6 +151,26 @@ public class GameSceneController : MonoBehaviour
         fruitManager.controlSpawning(false);
     }
 
+    private Vector3 translateDirection(Directions original)
+    {
+        switch (original)
+        {
+            case Directions.Down:
+                return Vector3.down;
+            case Directions.Left:
+                return Vector3.left;
+            case Directions.Right:
+                return Vector3.right;
+            case Directions.Up:
+                return Vector3.up;
+            default:
+                return Vector3.zero;
+        }
+    }
+
+    #endregion
+
+    #region fruits
     private void fruitCollected()
     {
         numberOfFruits--;
@@ -167,12 +183,35 @@ public class GameSceneController : MonoBehaviour
         requiredFruits++;
     }
 
-    public bool isCollectingWell()
+    public void DealWithFruitLoss()
     {
-        return totalCollectedFruit + fruitLenience >= requiredFruits && FindObjectsOfType<Fruit>().Length==0;
+        fruitLost++;
+        if (fruitLost <= fruitLenience)
+        {
+            lostFruitsUI.indicateLoss();
+        }
+        else
+        {
+            lostFruitsUI.indicateNotEnoughFruit();
+            Invoke("respawn", 1.6f);
+        }
     }
 
-    private void useSavePoint(SavePoint sp)
+    public bool isCollectingWell()
+    {
+        return totalCollectedFruit + fruitLenience >= requiredFruits && FindObjectsOfType<Fruit>().Length == 0;
+    }
+
+    public int getCollectedFruit()
+    {
+        return totalCollectedFruit;
+    }
+
+#endregion
+
+    #region savepoints and respawn
+
+private void useSavePoint(SavePoint sp)
     {
         lostFruitsUI.reset();
         if ( ! (gameManager.activeSPs.ContainsKey(sp.gameObject.name) && gameManager.activeSPs[sp.gameObject.name] == true)) //we have encountered this save point for the first time
@@ -205,35 +244,43 @@ public class GameSceneController : MonoBehaviour
 
     private void respawn()
     {
+        FindObjectOfType<DeathUI>().disappear();
         gameManager.startingSP = lastSP.gameObject.name;
         gameManager.startingLength = lastSP.getSavedLength();
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
-    private Vector3 translateDirection(Directions original)
-    {
-        switch (original)
-        {
-            case Directions.Down:
-                return Vector3.down;
-            case Directions.Left:
-                return Vector3.left;
-            case Directions.Right:
-                return Vector3.right;
-            case Directions.Up:
-                return Vector3.up;
-            default:
-                return Vector3.zero;
-        }
-    }
+    #endregion
+
+    #region game end and level transition
 
     private void endGame(bool won)
     {
         _gameOver = true;
+        FindObjectOfType<DeathUI>().appear();
     }
 
     private void nextLevel(string nextLevelName)
     {
+        if (!_gameOver)
+        {
+            fruitCollectedNumberIndicator.text = playerController.getLength().ToString();
+            Animator transitionAnimator = levelTransitionUI.GetComponent<Animator>();
+            transitionAnimator.enabled = true;
+            float animationTime = transitionAnimator.runtimeAnimatorController.animationClips[0].length;
+            StartCoroutine(delayedNextLevel(animationTime, nextLevelName));
+        }
+    }
+
+    private IEnumerator delayedNextLevel(float delay, string nextLevelName)
+    {
+        yield return new WaitForSeconds(delay);
+        while (!Input.GetKey(KeyCode.Space))
+        {
+            yield return new WaitForEndOfFrame();
+        }
         gameManager.transition(nextLevelName);
     }
+
+    #endregion
 }

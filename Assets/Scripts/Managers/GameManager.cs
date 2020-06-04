@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
@@ -10,6 +11,8 @@ public class GameManager : MonoBehaviour
     public string startingSP;
     public int startingLength;
     public Dictionary<string, bool> activeSPs;
+
+    private float originalVolume;
 
     private void Awake()
     {
@@ -40,6 +43,7 @@ public class GameManager : MonoBehaviour
         AudioSource audioSource  = GetComponent<AudioSource>();
         float currentTime = 0;
         float start = audioSource.volume;
+        originalVolume = start;
         
         while (currentTime < duration)
         {
@@ -54,7 +58,7 @@ public class GameManager : MonoBehaviour
     {
         yield return new WaitForSeconds(duration);
         GetComponent<AudioSource>().Play();
-        GetComponent<AudioSource>().volume = 1;
+        GetComponent<AudioSource>().volume = originalVolume;
        
     }
 

@@ -28,6 +28,13 @@ public class Fruit : MonoBehaviour
             {
                 isOffScreen = true;
             }
+            else if (tagger.containsCustomTag("inner screen bounds"))
+            {
+                if (isOffScreen == false)
+                {
+                    //here would be a code to flash before disappearing, if playtest indicates we should implement that
+                }
+            }
         }
     }
 }

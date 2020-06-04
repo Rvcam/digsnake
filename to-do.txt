@@ -1,19 +1,32 @@
-FEATURES
-base pra deixar algumas pessoas e diminuir o tamanho da cobra
-interações entre o próprio cenário (colisões de meteros, et.)
-mais meteoros
-níveis de dificuldade
--collectables de exploração
+suculência:
 
-CORREÇÕES
-usar enum na direção de snake head
-composição do background da tela do botão "play"
-posição da camera quando respawna no save point
-algumas vezes o audio toca antes do que deveria, na tela do "play"
-n deixar a pessoa passar de nível se morrer
+	efeitos sonoros
+	morte
+	pausa
+	bigger anti fruit aura
+	level X
 
-CONSIDERAÇÕES
-chato não pegar todas as frutas
-como recompensar mais exploração
-power-ups
-keep it simple!'
+_______________________________________
+
+
+04: terminar quantas pessoas salvas, terminar advanced game dev
+05: testar AZ, ajustar baseado nos testes AZ
+--: commit
+06, 07: playtest, AI for beginners
+
+08: pensar em formas de tornar o jogo juicy, AI for beginners
+09, 10: implementar juiciness, terminar AI for beginners
+11: implementar juiciness, testar AZ
+12: ajustar baseado nos testes AZ, me credenciar pro roast my game
+--: commit
+13, 14: playtest incluindo roast my game
+
+15, 16: ajustar baseado em playtest
+17, 18: procurar publicar
+19: launch day
+20, 21: crunch if necessary
+--: celebrate porra
+
+22 onwards: reevaluate. New project? resume? freelance? study? Keep track of rescue snake's launch.
+
+

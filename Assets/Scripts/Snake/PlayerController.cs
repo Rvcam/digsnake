@@ -145,6 +145,22 @@ public class PlayerController : SnakePart
             }
         }
     }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        Tagger tagger = collision.gameObject.GetComponent<Tagger>();
+        if (tagger)
+        {
+            if (gameSceneController.gameOver == false)
+            {
+                if (tagger.containsCustomTag("outer game bounds"))
+                {
+                    die();
+                }
+            }
+        }
+    }
+
     public void onChildObstacleHit()
     {
         die();
