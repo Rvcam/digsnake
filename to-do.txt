@@ -1,32 +1,24 @@
 suculência:
 
-	efeitos sonoros
-	morte
-	pausa
-	bigger anti fruit aura
-	level X
+	efeitos sonoros:
+		música na tela inicial
+		quando apertar espaço, efeito sonoro
+		quando pegar fruta, efeito sonoro
+		quando acelerar, efeito sonoro
+		quando ativar savepoint, nas duas ativações, efeito sonoro
+		ao bater num obstáculo,l efeito sonoro
+		ao chegar no level portal, efeito sonoro
+		morte
 
 _______________________________________
 
+08: AI for beginners
+09: procurar e implementar sons, AI for beginners
+10: sons que sobrarem, telas de créditos, pesquisar , planejar e implementar lançamento
+11: implementar lançamento, AI for beginners
+12: teste AZ incluindo assets de lançamento, lançar!!, comemorar porra
 
-04: terminar quantas pessoas salvas, terminar advanced game dev
-05: testar AZ, ajustar baseado nos testes AZ
---: commit
-06, 07: playtest, AI for beginners
 
-08: pensar em formas de tornar o jogo juicy, AI for beginners
-09, 10: implementar juiciness, terminar AI for beginners
-11: implementar juiciness, testar AZ
-12: ajustar baseado nos testes AZ, me credenciar pro roast my game
---: commit
-13, 14: playtest incluindo roast my game
-
-15, 16: ajustar baseado em playtest
-17, 18: procurar publicar
-19: launch day
-20, 21: crunch if necessary
---: celebrate porra
-
-22 onwards: reevaluate. New project? resume? freelance? study? Keep track of rescue snake's launch.
+13: reevaluate. New project? resume? freelance? study? Keep track of rescue snake's launch.
 
 

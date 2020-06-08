@@ -22,7 +22,6 @@ public class PlayButtonIntro : MonoBehaviour
     {
         if (Input.anyKeyDown) 
         {
-           
             SceneManager.LoadScene(nextLevel);
         }
     }

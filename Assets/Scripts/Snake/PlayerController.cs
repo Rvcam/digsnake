@@ -19,6 +19,7 @@ public class PlayerController : SnakePart
     [SerializeField]
     [Range(0.3f, 3.0f)]
     private float teleportingDistance = 3;
+    bool paused = false;
 
     public event Action<bool> Finished;
     public event Action FruitCollected;
@@ -43,22 +44,22 @@ public class PlayerController : SnakePart
     protected void directionalInput()
     {
         Vector3 newDirection = oldDirection;
-        if (Input.GetKeyDown("right"))
+        if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
         {
             newDirection = new Vector3(1, 0, 0);
         }
 
-        if (Input.GetKeyDown("left"))
+        if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
         {
             newDirection = new Vector3(-1, 0, 0);
         }
 
-        if (Input.GetKeyDown("up"))
+        if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
         {
             newDirection = new Vector3(0, 1, 0);
         }
 
-        if (Input.GetKeyDown("down"))
+        if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
         {
             newDirection = new Vector3(0, -1, 0);
         }
@@ -96,6 +97,7 @@ public class PlayerController : SnakePart
     {
         if (!gameSceneController.gameOver)
         {
+            checkForPause();
             if (!directionSet)
             {
                 timeLastDirectionChange = Time.time;
@@ -237,5 +239,21 @@ public class PlayerController : SnakePart
     public void teleport()
     {
         teleporting = true;
+    }
+
+    private void checkForPause()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.Backspace) || Input.GetKeyDown(KeyCode.P))
+        {
+            paused = !paused;
+        }
+        if (paused)
+        {
+            Time.timeScale = 0;
+        }
+        else
+        {
+            Time.timeScale = 1;
+        }
     }
 }
