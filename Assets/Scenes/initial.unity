@@ -852,8 +852,8 @@ GameObject:
   m_Component:
   - component: {fileID: 676118711}
   - component: {fileID: 676118710}
-  - component: {fileID: 676118709}
   - component: {fileID: 676118712}
+  - component: {fileID: 676118709}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1390,6 +1390,7 @@ PrefabInstance:
     m_RemovedComponents:
     - {fileID: 6425858589634821364, guid: c2bb3f82b790fb3479a2bda68a57dd2d, type: 3}
     - {fileID: 6425858588107158356, guid: c2bb3f82b790fb3479a2bda68a57dd2d, type: 3}
+    - {fileID: 5731227316285536909, guid: c2bb3f82b790fb3479a2bda68a57dd2d, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: c2bb3f82b790fb3479a2bda68a57dd2d, type: 3}
 --- !u!4 &949808435 stripped
 Transform:
@@ -3326,6 +3327,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nextLevel: instructions
+  preloadLevel: preload
 --- !u!212 &2080891319
 SpriteRenderer:
   m_ObjectHideFlags: 0

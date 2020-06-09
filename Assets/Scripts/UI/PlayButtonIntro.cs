@@ -6,15 +6,12 @@ using UnityEngine.SceneManagement;
 public class PlayButtonIntro : MonoBehaviour
 {
     public string nextLevel;
+    public string preloadLevel;
     private void Awake()
     {
         if (FindObjectOfType<GameManager>() == null)
         {
-            SceneManager.LoadScene(nextLevel);
-        }
-        else
-        {
-            FindObjectOfType<GameManager>().GetComponent<AudioSource>().Stop();
+            SceneManager.LoadScene(preloadLevel);
         }
     }
 

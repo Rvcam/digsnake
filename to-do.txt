@@ -12,9 +12,9 @@ suculência:
 
 _______________________________________
 
-08: AI for beginners
-09: procurar e implementar sons, AI for beginners
-10: sons que sobrarem, telas de créditos, pesquisar , planejar e implementar lançamento
+
+09: procurar e implementar sons, AI for beginners, ivermectina
+10: ivermectina, sons que sobrarem, telas de créditos, pesquisar , planejar e implementar lançamento
 11: implementar lançamento, AI for beginners
 12: teste AZ incluindo assets de lançamento, lançar!!, comemorar porra
 

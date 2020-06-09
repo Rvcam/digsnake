@@ -1,0 +1,11 @@
+music copyrights:
+
+background track: fractal dreamers
+menu: soundcloud.com/alexandr-zhelanov
+eat fruit: dklon
+death: David McKee (ViRiX) soundcloud.com/virix
+press space menu: Little Robot Sound Factory littlerobotsoundfactory.com
+accelarate:	Little Robot Sound Factory littlerobotsoundfactory.com
+endlevel: remaxim opengameart.org./users/remaxim
+savepoint: Little Robot Sound Factory littlerobotsoundfactory.com
+		

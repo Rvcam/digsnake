@@ -11,19 +11,26 @@ public class GameManager : MonoBehaviour
     public string startingSP;
     public int startingLength;
     public Dictionary<string, bool> activeSPs;
+    
+    [SerializeField]
+    AudioClip mainClip=null;
 
     private float originalVolume;
 
     private void Awake()
     {
+        DontDestroyOnLoad(gameObject);
         activeSPs = new Dictionary<string, bool>();
         startingLength = 1;
-        DontDestroyOnLoad(gameObject);
+        GetComponent<AudioSource>().volume = 1.5f;
+        GetComponent<AudioSource>().Play();
         SceneManager.LoadScene(firstScene);
     }
 
     public void transition(string sceneName)
     {
+        GetComponent<AudioSource>().clip = mainClip;
+        GetComponent<AudioSource>().volume = 0.5f;
         resetLevelData();
         float timeToWait = 2;
         StartCoroutine(fadeOut(timeToWait));

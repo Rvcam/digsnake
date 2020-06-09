@@ -43,6 +43,9 @@ public class SavePoint : MonoBehaviour
     [SerializeField]
     private bool isChild=false;
 
+    [SerializeField]
+    AudioClip activationClip=null;
+
     private void Awake()
     {
         if (savedLength == 0)
@@ -145,6 +148,7 @@ public class SavePoint : MonoBehaviour
         {
             if (state == SavePointStates.ReadyToActivate)
             {
+                GetComponent<AudioSource>().PlayOneShot(activationClip);
                 savedLength = collision.gameObject.GetComponent<PlayerController>().getLength();
                 Activate(null);
             }

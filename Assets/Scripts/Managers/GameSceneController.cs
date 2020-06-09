@@ -40,6 +40,11 @@ public class GameSceneController : MonoBehaviour
 
     public TextMeshPro fruitCollectedNumberIndicator=null;
 
+    [SerializeField]
+    AudioClip winClip=null;
+    [SerializeField]
+    AudioClip pressSpaceMenuClip=null;
+
     #endregion
 
     #region monobehaviour methods
@@ -264,6 +269,7 @@ private void useSavePoint(SavePoint sp)
     {
         if (!_gameOver)
         {
+            GetComponent<AudioSource>().PlayOneShot(winClip, 4);
             fruitCollectedNumberIndicator.text = playerController.getLength().ToString();
             Animator transitionAnimator = levelTransitionUI.GetComponent<Animator>();
             transitionAnimator.enabled = true;
@@ -274,11 +280,14 @@ private void useSavePoint(SavePoint sp)
 
     private IEnumerator delayedNextLevel(float delay, string nextLevelName)
     {
+
+        playerController.accelerateEnabled = false;
         yield return new WaitForSeconds(delay);
         while (!Input.GetKey(KeyCode.Space))
         {
             yield return new WaitForEndOfFrame();
         }
+        GetComponent<AudioSource>().PlayOneShot(pressSpaceMenuClip, 1);
         gameManager.transition(nextLevelName);
     }
 

@@ -14,7 +14,7 @@ public class PlayerController : SnakePart
     private int initialSize = 0;
     Vector3 oldDirection;
     private int oldSizeDiff;
-    private bool directionSet=false;
+    private bool directionSet = false;
     private bool teleporting;
     [SerializeField]
     [Range(0.3f, 3.0f)]
@@ -26,8 +26,19 @@ public class PlayerController : SnakePart
 
     private bool isAccelerating;
     private float speedChangedBy;
+    public bool accelerateEnabled = true;
+
+    [SerializeField]
+    AudioClip getFruitClip=null;
+    [SerializeField]
+    AudioClip deathClip=null;
+    [SerializeField]
+    AudioClip accelerateClip=null;
+    AudioSource audioSource;
 
     #endregion
+
+   
     protected override void Start()
     {
         base.Start();
@@ -39,7 +50,10 @@ public class PlayerController : SnakePart
         snakeLength++;
         isAccelerating = false;
         speedChangedBy = 0;
+        audioSource = GetComponent<AudioSource>();
     }
+
+    #region movement, update and collision
 
     protected void directionalInput()
     {
@@ -120,7 +134,7 @@ public class PlayerController : SnakePart
                 transform.right = gameSceneController.getRoomDirectionAsVector();
             }
 
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (accelerateEnabled && Input.GetKeyDown(KeyCode.Space))
             {
                 accelerate(3);
             }
@@ -140,6 +154,7 @@ public class PlayerController : SnakePart
             {
                 if (tagger.containsCustomTag("fruit"))
                 {
+                    audioSource.PlayOneShot(getFruitClip);
                     FruitCollected();
                     Destroy(collision.gameObject);
                     growParts();
@@ -168,30 +183,20 @@ public class PlayerController : SnakePart
         die();
     }
 
+    #endregion
+
     private void die()
     {
         speed = 0;
         if (childScript)
         {
             childScript.transform.Translate(new Vector3(0, 0, -0.1f));
-            childScript.StartCoroutine(childScript.blink(Color.red));
+            //childScript.StartCoroutine(childScript.blink(Color.red));
         }
         Finished(false);
         myRenderer.color = new Color(1, 1, 1, 0);
         myLight.intensity = 0;
-    }
-
-    private void win()
-    {
-        speed = 0;
-        if (childScript)
-        {
-            childScript.transform.Translate(new Vector3(0, 0, -0.1f));
-            childScript.StartCoroutine(childScript.blink(Color.green));
-        }
-        Finished(true);
-        myRenderer.color = new Color(1, 1, 1, 0);
-            
+        audioSource.PlayOneShot(deathClip, 2);
     }
 
     public void delayedGrowth(int numberToGrow)
@@ -219,6 +224,7 @@ public class PlayerController : SnakePart
         
         if (!isAccelerating)
         {
+            audioSource.PlayOneShot(accelerateClip);
             float originalSpeed = speed;
             float newSpeed = speed * rate;
             changeSnakeSpeed(newSpeed);
@@ -226,7 +232,7 @@ public class PlayerController : SnakePart
             speedChangedBy = newSpeed - originalSpeed;
             StartCoroutine(undoAccelerate(1));
         }
-        
+      
     }
 
     private IEnumerator undoAccelerate(float time)
@@ -249,6 +255,7 @@ public class PlayerController : SnakePart
         }
         if (paused)
         {
+
             Time.timeScale = 0;
         }
         else
