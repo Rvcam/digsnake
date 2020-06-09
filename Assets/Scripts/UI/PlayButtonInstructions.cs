@@ -19,7 +19,6 @@ public class PlayButtonInstructions : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space) )
         {
-            GetComponent<AudioSource>().Play();
             FindObjectOfType<GameManager>().transition(nextLevel);
         }
     }
