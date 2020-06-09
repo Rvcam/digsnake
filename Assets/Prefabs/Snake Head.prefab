@@ -586,9 +586,9 @@ MonoBehaviour:
     type: 3}
   teleportingDistance: 1.5
   accelerateEnabled: 1
-  getFruitClip: {fileID: 0}
-  deathClip: {fileID: 0}
-  accelerateClip: {fileID: 0}
+  getFruitClip: {fileID: 8300000, guid: c31b966a0b2dceb48915e525d5f20ee6, type: 3}
+  deathClip: {fileID: 8300000, guid: 56edee5ba263fdb468ba296b8ec19b59, type: 3}
+  accelerateClip: {fileID: 8300000, guid: d92fd54864beb1049a19d347b0ac9cf7, type: 3}
 --- !u!61 &6425858589634821365
 BoxCollider2D:
   m_ObjectHideFlags: 0
