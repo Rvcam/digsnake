@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviour
     public void transition(string sceneName)
     {
         GetComponent<AudioSource>().clip = mainClip;
-        GetComponent<AudioSource>().volume = 0.5f;
+        GetComponent<AudioSource>().volume = 0.25f;
         resetLevelData();
         float timeToWait = 2;
         StartCoroutine(fadeOut(timeToWait));
