@@ -1,20 +1,6 @@
-suculência:
-
-	efeitos sonoros:
-		música na tela inicial
-		quando apertar espaço, efeito sonoro
-		quando pegar fruta, efeito sonoro
-		quando acelerar, efeito sonoro
-		quando ativar savepoint, nas duas ativações, efeito sonoro
-		ao bater num obstáculo,l efeito sonoro
-		ao chegar no level portal, efeito sonoro
-		morte
-
-_______________________________________
-
-
-10:  telas de créditos, converter o projeto pra web, pesquisar , planejar e implementar lançamento
-11: implementar lançamento, AI for beginners
+10:converter o projeto pra web, balão de 
+"help", postar teaser no whatsapp(?)
+11:make github, kongregate, itch.io accounts, make icon, make description, take screenshots, make instructions, figure out tags, 
 12: teste AZ incluindo assets de lançamento, lançar!!, comemorar porra
 
 
